@@ -9,7 +9,7 @@
 // }
 //
 // --------------------------------------------------------------
-Game.render.Image = (function(graphics) {
+Game.render.SpaceShip = (function(graphics) {
     'use strict';
 
     function render(spec) {

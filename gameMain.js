@@ -19,11 +19,11 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     let score = 0;
 
     // objects
-    let spaceShip = objects.Image({
+    let spaceShip = objects.SpaceShip({
         imageSrc: 'resources/images/spaceship-main.png',
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2},
         size: { width: 100, height: 100 },
-        moveRate: 50 / 1000 // pixels per millisecond
+        speed: 50 / 1000 // pixels per millisecond
     }); 
 
     function message() {
@@ -31,7 +31,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     }
 
     gameKeyboard.register('ArrowUp', spaceShip.moveUp); 
-    gameKeyboard.register('ArrowDown', spaceShip.moveDown)
+    gameKeyboard.register('ArrowDown', spaceShip.moveDown);
+    gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
+    gameKeyboard.register('ArrowRight', spaceShip.rotateRight); 
     gameKeyboard.register('m', message()); 
 
     // *****************************************
@@ -39,7 +41,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // *****************************************
     function render() {
         graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
-        renderer.Image.render(spaceShip); 
+        renderer.SpaceShip.render(spaceShip); 
 
         highScoreManager.displayHighScores();
         highScoreManager.displayCurrentScore(endTime - startTime, score);
