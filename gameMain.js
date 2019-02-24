@@ -23,18 +23,16 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         imageSrc: 'resources/images/spaceship-main.png',
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2},
         size: { width: 100, height: 100 },
-        speed: 50 / 1000 // pixels per millisecond
+        speed: 500 / 1000, // pixels per millisecond
+        canvasHeight: graphics.canvas.height,
+        canvasWidth: graphics.canvas.width,
+        thrust: 500 / 1000
     }); 
-
-    function message() {
-        console.log('Message'); 
-    }
 
     gameKeyboard.register('ArrowUp', spaceShip.moveUp); 
     gameKeyboard.register('ArrowDown', spaceShip.moveDown);
     gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
     gameKeyboard.register('ArrowRight', spaceShip.rotateRight); 
-    gameKeyboard.register('m', message()); 
 
     // *****************************************
     // ************* Rendering *****************

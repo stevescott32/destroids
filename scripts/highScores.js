@@ -4,6 +4,7 @@
 // ************************************************
 
 Game.highScores = (function getHighScoreManager() {
+  console.log('Initializing high scores'); 
   // print the current score out to the screen 
   let highScores = []; 
   getHighScores(); 

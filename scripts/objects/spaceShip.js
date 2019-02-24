@@ -12,53 +12,59 @@
 // --------------------------------------------------------------
 Game.objects.SpaceShip = function (spec) {
     'use strict';
+    console.log('Initializing space ship'); 
 
-    let rotationRate = 15;
-    let speed = spec.speed;
-    let rotation = 180;
+    let rotationRate = Math.PI / 32;  
+    let rotation = Math.PI / 2;
     let imageReady = false;
     let image = new Image();
+    let xSpeed = 0; 
+    let ySpeed = 0; 
 
     image.onload = function () {
         imageReady = true;
     };
     image.src = spec.imageSrc;
 
-    function rotateRight(elapsedTime) {
+    function rotateLeft(elapsedTime) {
         rotation -= rotationRate;
         if (rotation < 0) {
-            rotation += 360;
+            rotation += 2 * Math.PI;
         }
     }
-    function rotateLeft(elapsedTime) {
+    function rotateRight(elapsedTime) {
         rotation += rotationRate;
-        if (rotation > 360) {
-            rotation += 360;
+        if (rotation > 2 * Math.PI) {
+            rotation -= 2 * Math.PI;
         }
     }
 
     function update(elapsedTime) {
-
-    }
-
-    function moveForward(elapsedTime) {
-
-    }
-
-    function moveLeft(elapsedTime) {
-        spec.center.x -= (spec.speed * elapsedTime);
-    }
-
-    function moveRight(elapsedTime) {
-        spec.center.x += (spec.speed * elapsedTime);
+        spec.center.x -= xSpeed; 
+        spec.center.y -= ySpeed; 
+        if(spec.center.x < 0) 
+        {
+            spec.center.x = spec.canvasWidth; 
+        }
+        else if(spec.center.x > spec.canvasWidth) {
+            spec.center.x = 0; 
+        }
+        else if(spec.center.y < 0) 
+        {
+            spec.center.y = spec.canvasHeight; 
+        }
+        else if(spec.center.y > spec.canvasHeight) {
+            spec.center.y = 0; 
+        }
     }
 
     function moveUp(elapsedTime) {
-        spec.center.y -= (spec.speed * elapsedTime);
+        xSpeed += Math.cos(rotation) * spec.thrust; 
+        ySpeed += Math.sin(rotation) * spec.thrust; 
     }
 
     function moveDown(elapsedTime) {
-        spec.center.y += (spec.speed * elapsedTime);
+        //spec.speed -= spec.boostSpeed;
     }
 
     function moveTo(pos) {
