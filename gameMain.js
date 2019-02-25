@@ -1,79 +1,39 @@
 Game = (function (objects, renderer, graphics, input, highScoreManager) {
-    console.log('Starting game main'); 
+    console.log('Starting game main');
 
     let inputBuffer = {};
-    let gameKeyboard = input.Keyboard(); 
+    let gameKeyboard = input.Keyboard();
 
     // rendering
 
     // settings
 
     // time
+    let current = performance.now();
+    let past = current;
+    let elapsedTime = current - past; //initialized to 0
+    let accumulatedTime = 0;
     let startTime = performance.now();
-    let endTime = performance.now();
     let quit = false;
 
     // highScores
     let highScoresInitialized = false;
-    //let highScoreManager = highScores.getHighScoreManager();
     let score = 0;
 
     // objects
     let spaceShip = objects.SpaceShip({
         imageSrc: 'resources/images/spaceship-main.png',
-        center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2},
-        size: { width: 100, height: 100 },
-        speed: 500 / 1000, // pixels per millisecond
+        center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2 },
+        size: { width: 80, height: 80 },
         canvasHeight: graphics.canvas.height,
         canvasWidth: graphics.canvas.width,
-        thrust: 500 / 1000
-    }); 
+        thrust: 500 / 1000,
+        rotationRate: Math.PI / 8 // radians per second
+    });
 
-    gameKeyboard.register('ArrowUp', spaceShip.moveUp); 
-    gameKeyboard.register('ArrowDown', spaceShip.moveDown);
+    gameKeyboard.register('ArrowUp', spaceShip.thrust);
     gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
-    gameKeyboard.register('ArrowRight', spaceShip.rotateRight); 
-
-    // *****************************************
-    // ************* Rendering *****************
-    // *****************************************
-    function render() {
-        graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
-        renderer.SpaceShip.render(spaceShip); 
-
-        highScoreManager.displayHighScores();
-        highScoreManager.displayCurrentScore(endTime - startTime, score);
-    }
-
-    // ********************************************
-    // ************* Process Inputs ***************
-    // ********************************************
-
-    function movePlayerShip(key) {
-        if (quit) { return; }
-        if (key === 'ArrowDown' || key === 's' || key === 'k') {
-            console.log('Down');
-        }
-        if (key == 'ArrowUp' || key === 'w' || key === 'i') {
-            console.log('Up');
-        }
-        if (key == 'ArrowRight' || key === 'd' || key === 'l') {
-            console.log('Right');
-        }
-        if (key == 'ArrowLeft' || key === 'a' || key === 'j') {
-            console.log('Left');
-        }
-    }
-
-    function processInput() {
-        for (input in inputBuffer) {
-            movePlayerShip(inputBuffer[input]);
-            if (input == 'n') {
-                restartButton();
-            }
-        }
-        inputBuffer = {};
-    }
+    gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
 
     // ********************************************
     // *************** Buttons ********************
@@ -83,11 +43,12 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     function restartButton() {
         quit = false;
         highScoreManager.removeHighScoreNotification();
+        spaceShip.newGame();
         initialize();
     }
 
     function clearHighScores() {
-        highScoreManager.clearHighScores(); 
+        highScoreManager.clearHighScores();
     }
 
     // ********************************************
@@ -96,14 +57,26 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
     // update function manages end time update
     function update(elapsedTime) {
-        endTime = performance.now();
-        spaceShip.update(elapsedTime); 
-        gameKeyboard.update(elapsedTime); 
+        spaceShip.update(elapsedTime);
+        gameKeyboard.update(elapsedTime);
     }
 
+    // *****************************************
+    // ************* Render ********************
+    // *****************************************
+    function render() {
+        graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
+        renderer.SpaceShip.render(spaceShip);
+
+        highScoreManager.displayHighScores();
+        highScoreManager.displayCurrentScore(current - startTime, score);
+    }
+
+
     function gameLoop() {
-        let elapsedTime = 200;// todo change this to be correct 
-        processInput();
+        current = performance.now();
+        elapsedTime = current - past;
+        past = current;
         update(elapsedTime);
         render();
 
@@ -112,6 +85,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
     function initialize() {
         startTime = performance.now();
+        current = performance.now(); 
+        past = performance.now(); 
+        accumulatedTime = 0; 
         score = 0;
 
         window.addEventListener('keydown', function (event) {
@@ -120,12 +96,13 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
         requestAnimationFrame(gameLoop);
     }
+    initialize();
 
     // quit the game 
     function endGame() {
         quit = true;
-        endTime = performance.now();
-        highScoreManager.checkForHighScores(endTime - startTime, score);
+        currentTime = performance.now();
+        highScoreManager.checkForHighScores(currentTime - startTime, score);
         highScoreManager.displayHighScores();
         highScoreManager.storeHighScores();
     }
@@ -136,11 +113,10 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
             + "\nGame Art: http://millionthvector.blogspot.de";
         alert(message);
     }
-    initialize(); 
     return {
         developerCredits: developerCredits,
         clearHighScores: clearHighScores,
         restartGame: restartButton
-    }; 
+    };
 
 }(Game.objects, Game.render, Game.graphics, Game.input, Game.highScores)); 

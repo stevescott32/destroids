@@ -14,34 +14,40 @@ Game.objects.SpaceShip = function (spec) {
     'use strict';
     console.log('Initializing space ship'); 
 
-    let rotationRate = Math.PI / 32;  
     let rotation = Math.PI / 2;
-    let imageReady = false;
-    let image = new Image();
     let xSpeed = 0; 
     let ySpeed = 0; 
+    let imageReady = false;
+    let image = new Image();
 
     image.onload = function () {
         imageReady = true;
     };
     image.src = spec.imageSrc;
 
+    function newGame() {
+        rotation = Math.PI / 2;
+        xSpeed = 0; 
+        ySpeed = 0; 
+        spec.center = { x: spec.canvasWidth / 2, y: spec.canvasHeight / 2};
+    }
+
     function rotateLeft(elapsedTime) {
-        rotation -= rotationRate;
+        rotation -= spec.rotationRate * (elapsedTime / 100);
         if (rotation < 0) {
             rotation += 2 * Math.PI;
         }
     }
     function rotateRight(elapsedTime) {
-        rotation += rotationRate;
+        rotation += spec.rotationRate * (elapsedTime / 100);
         if (rotation > 2 * Math.PI) {
             rotation -= 2 * Math.PI;
         }
     }
 
     function update(elapsedTime) {
-        spec.center.x -= xSpeed; 
-        spec.center.y -= ySpeed; 
+        spec.center.x -= xSpeed * (elapsedTime / 100); 
+        spec.center.y -= ySpeed * (elapsedTime / 100); 
         if(spec.center.x < 0) 
         {
             spec.center.x = spec.canvasWidth; 
@@ -58,13 +64,11 @@ Game.objects.SpaceShip = function (spec) {
         }
     }
 
-    function moveUp(elapsedTime) {
+    function thrust(elapsedTime) {
         xSpeed += Math.cos(rotation) * spec.thrust; 
         ySpeed += Math.sin(rotation) * spec.thrust; 
-    }
-
-    function moveDown(elapsedTime) {
-        //spec.speed -= spec.boostSpeed;
+        console.log('Thrusting: ');
+        console.log(xSpeed); console.log(ySpeed); 
     }
 
     function moveTo(pos) {
@@ -76,9 +80,9 @@ Game.objects.SpaceShip = function (spec) {
         update: update,
         rotateLeft: rotateLeft,
         rotateRight: rotateRight,
-        moveUp: moveUp,
-        moveDown: moveDown,
+        thrust: thrust,
         moveTo: moveTo,
+        newGame: newGame,
         get imageReady() { return imageReady; },
         get rotation() { return rotation; },
         get image() { return image; },
