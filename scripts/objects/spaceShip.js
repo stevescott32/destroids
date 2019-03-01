@@ -80,7 +80,7 @@ Game.objects.SpaceShip = function (spec) {
         else if(ySpeed < -1 * MAX_SPEED) {
             ySpeed -= Math.sin(rotation) * spec.thrust; 
         }
-        console.log(xSpeed); console.log(ySpeed); 
+        // console.log(xSpeed); console.log(ySpeed); 
     }
 
     function moveTo(pos) {

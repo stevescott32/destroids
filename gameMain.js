@@ -4,9 +4,6 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     let inputBuffer = {};
     let gameKeyboard = input.Keyboard();
 
-    // rendering
-
-    // settings
 
     // time
     let current = performance.now();
@@ -31,9 +28,37 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         rotationRate: Math.PI / 8 // radians per second
     });
 
+    let spaceShipLasers = objects.LaserManager({
+        imageSrc: 'resources/images/laser.png',
+        maxX: graphics.canvas.height,
+        maxY: graphics.canvas.width,
+        interval: 200 // milliseconds
+    });
+
+    function makeLaser(elapsedTime) {
+        let center = {
+            x: spaceShip.center.x,
+            y: spaceShip.center.y
+        };
+        let size = {
+            width: 15,
+            height: 15
+        };
+        let spec = {
+            center: center,
+            size: size,
+            speed: 1,
+            rotation: spaceShip.rotation 
+        };
+        spaceShipLasers.addLaser(spec);
+    }
+
+
     gameKeyboard.register('ArrowUp', spaceShip.thrust);
     gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
     gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
+    //gameKeyboard.register('p', spaceShipLasers.premadeLaser);
+    gameKeyboard.register('x', makeLaser); 
 
     // ********************************************
     // *************** Buttons ********************
@@ -41,7 +66,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
     // restart the game, resetting all needed values
     function restartButton() {
-        endGame(); 
+        endGame();
         quit = false;
         highScoreManager.removeHighScoreNotification();
         spaceShip.newGame();
@@ -58,8 +83,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
     // update function manages end time update
     function update(elapsedTime) {
-        spaceShip.update(elapsedTime);
         gameKeyboard.update(elapsedTime);
+        spaceShip.update(elapsedTime);
+        spaceShipLasers.update(elapsedTime);
     }
 
     // *****************************************
@@ -67,6 +93,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // *****************************************
     function render() {
         graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
+        renderer.Laser.render(spaceShipLasers);
         renderer.SpaceShip.render(spaceShip);
 
         highScoreManager.displayHighScores();
@@ -81,16 +108,16 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         update(elapsedTime);
         render();
 
-        if(!quit) {
+        if (!quit) {
             requestAnimationFrame(gameLoop);
         }
     }
 
     function initialize() {
         startTime = performance.now();
-        current = performance.now(); 
-        past = performance.now(); 
-        accumulatedTime = 0; 
+        current = performance.now();
+        past = performance.now();
+        accumulatedTime = 0;
         score = 0;
 
         window.addEventListener('keydown', function (event) {
