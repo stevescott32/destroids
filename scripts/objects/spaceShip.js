@@ -13,6 +13,7 @@
 Game.objects.SpaceShip = function (spec) {
     'use strict';
     console.log('Initializing space ship'); 
+    let MAX_SPEED = 200; 
 
     let rotation = Math.PI / 2;
     let xSpeed = 0; 
@@ -66,8 +67,19 @@ Game.objects.SpaceShip = function (spec) {
 
     function thrust(elapsedTime) {
         xSpeed += Math.cos(rotation) * spec.thrust; 
+        if(xSpeed > MAX_SPEED) {
+            xSpeed -= Math.cos(rotation) * spec.thrust; 
+        }
+        else if(xSpeed < -1 * MAX_SPEED) {
+            xSpeed -= Math.cos(rotation) * spec.thrust; 
+        }
         ySpeed += Math.sin(rotation) * spec.thrust; 
-        console.log('Thrusting: ');
+        if(ySpeed > MAX_SPEED) {
+            ySpeed -= Math.sin(rotation) * spec.thrust; 
+        }
+        else if(ySpeed < -1 * MAX_SPEED) {
+            ySpeed -= Math.sin(rotation) * spec.thrust; 
+        }
         console.log(xSpeed); console.log(ySpeed); 
     }
 

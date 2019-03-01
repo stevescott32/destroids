@@ -76,7 +76,7 @@ Game.highScores = (function getHighScoreManager() {
   }
 
   // see if the current score makes it into the high score list
-  function checkForHighScores(endTime, startTime) {
+  function checkForHighScores(endTime, startTime, score) {
     let highScoreAdded = false;
     let totalTime = endTime - startTime;
     if (!highScores || highScores.length == 0) {

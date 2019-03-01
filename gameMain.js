@@ -41,6 +41,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
     // restart the game, resetting all needed values
     function restartButton() {
+        endGame(); 
         quit = false;
         highScoreManager.removeHighScoreNotification();
         spaceShip.newGame();
@@ -80,7 +81,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         update(elapsedTime);
         render();
 
-        requestAnimationFrame(gameLoop);
+        if(!quit) {
+            requestAnimationFrame(gameLoop);
+        }
     }
 
     function initialize() {
