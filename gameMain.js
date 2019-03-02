@@ -22,10 +22,12 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         imageSrc: 'resources/images/spaceship-main.png',
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2 },
         size: { width: 80, height: 80 },
+        radius: 35,
         canvasHeight: graphics.canvas.height,
         canvasWidth: graphics.canvas.width,
         thrust: 500 / 1000,
-        rotationRate: Math.PI / 8 // radians per second
+        rotationRate: Math.PI / 16, // radians per second
+        crashed: false,
     });
 
     let spaceShipLasers = objects.LaserManager({
@@ -35,30 +37,40 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         interval: 200 // milliseconds
     });
 
-    function makeLaser(elapsedTime) {
+    function shoot(elapsedTime) {
         let center = {
             x: spaceShip.center.x,
             y: spaceShip.center.y
         };
         let size = {
-            width: 15,
+            width: 25,
             height: 15
         };
         let spec = {
             center: center,
             size: size,
             speed: 1,
-            rotation: spaceShip.rotation 
+            rotation: spaceShip.rotation
         };
         spaceShipLasers.addLaser(spec);
     }
 
+    let asteroidManager = objects.AsteroidManager({
+        imageSrc: "resources/images/asteroid.png",
+        maxX: graphics.canvas.height,
+        maxY: graphics.canvas.width,
+        maxSize: 200,
+        minSize: 50, 
+        maxSpeed: 150,
+        minSpeed: 50,
+        interval: 1 // seconds
+    });
 
     gameKeyboard.register('ArrowUp', spaceShip.thrust);
     gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
     gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
-    //gameKeyboard.register('p', spaceShipLasers.premadeLaser);
-    gameKeyboard.register('x', makeLaser); 
+    gameKeyboard.register('x', shoot);
+    gameKeyboard.register('Space', shoot);
 
     // ********************************************
     // *************** Buttons ********************
@@ -75,6 +87,19 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
     function clearHighScores() {
         highScoreManager.clearHighScores();
+        asteroidManager.addAsteroid({
+            center: {
+                x: 300,
+                y: 300
+            },
+            size: {
+                height: 50,
+                width: 50
+            },
+            rotation: 2.5 * Math.PI / 2,
+            rotationSpeed: Math.PI / 16,
+            speed: -40
+        });
     }
 
     // ********************************************
@@ -84,8 +109,14 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // update function manages end time update
     function update(elapsedTime) {
         gameKeyboard.update(elapsedTime);
+        asteroidManager.update(elapsedTime);
         spaceShip.update(elapsedTime);
         spaceShipLasers.update(elapsedTime);
+        asteroidManager.detectLaserCollisions(spaceShipLasers);
+        if (!spaceShip.crashed && asteroidManager.detectCircleCollision(spaceShip.center, spaceShip.radius)) {
+            spaceShip.crashed = true;
+            endGame(); 
+        }
     }
 
     // *****************************************
@@ -94,6 +125,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     function render() {
         graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
         renderer.Laser.render(spaceShipLasers);
+        renderer.Asteroid.render(asteroidManager);
         renderer.SpaceShip.render(spaceShip);
 
         highScoreManager.displayHighScores();
@@ -118,6 +150,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         current = performance.now();
         past = performance.now();
         accumulatedTime = 0;
+        
         score = 0;
 
         window.addEventListener('keydown', function (event) {
@@ -140,7 +173,8 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     function developerCredits() {
         let message = "Game Development: Steven Scott"
             + "\nGame Testing: Shane Canfield, Katie Taylor"
-            + "\nGame Art: http://millionthvector.blogspot.de";
+            + "\nGame Art: http://millionthvector.blogspot.de"
+            + "https://ya-webdesign.com/download.html?utm_source=gg#gal_445279";
         alert(message);
     }
     return {

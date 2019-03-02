@@ -13,7 +13,7 @@ Game.render.SpaceShip = (function(graphics) {
     'use strict';
 
     function render(spec) {
-        if (spec.imageReady) {
+        if (spec.imageReady && !spec.crashed) {
             graphics.drawTexture(spec.image, spec.center, spec.rotation, spec.size);
         }
     }

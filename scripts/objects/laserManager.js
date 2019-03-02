@@ -22,13 +22,8 @@ Game.objects.LaserManager = function (managerSpec) {
       x: laserSpec.center.x,
       y: laserSpec.center.y
     }
-    let size = {
-      height: laserSpec.height,
-      width: laserSpec.width,
-    }
     let laser = {
       center: center,
-      size: size,
       xSpeed: Math.cos(laserSpec.rotation) * laserSpec.speed,
       ySpeed: Math.sin(laserSpec.rotation) * laserSpec.speed,
       size: laserSpec.size,
@@ -50,11 +45,22 @@ Game.objects.LaserManager = function (managerSpec) {
   }
 
 
+  // check if the circle object has collided with any of the lasers in the laser manager 
   function detectCircleCollision(center, radius) {
-
+    for(let l = 0; l < lasers.length; l++) {
+      let laser = lasers[l]; 
+      let distanceSquared = Math.pow(center.x - laser.center.x, 2) + Math.pow(center.y - laser.center.y, 2); 
+      if(!laser.isDead && radius * radius > distanceSquared) {
+        laser.isDead = true; 
+        return true; 
+      }
+    }
   }
 
   function update(elapsedTime) {
+    if(lasers[0] && lasers[0].isDead) {
+      lasers.shift(); 
+    }
     for (let l = 0; l < lasers.length; l++) {
       let laser = lasers[l];
       laser.center.x -= laser.xSpeed * elapsedTime;

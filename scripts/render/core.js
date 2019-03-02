@@ -18,6 +18,8 @@ Game.graphics = (function() {
     //
     // --------------------------------------------------------------
     function drawTexture(image, center, rotation, size) {
+        //console.log("texture");
+        //console.log(image); 
         context.save();
 
         context.translate(center.x, center.y);

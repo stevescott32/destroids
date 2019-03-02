@@ -99,7 +99,8 @@ Game.objects.SpaceShip = function (spec) {
         get rotation() { return rotation; },
         get image() { return image; },
         get center() { return spec.center; },
-        get size() { return spec.size; }
+        get size() { return spec.size; },
+        get radius() { return spec.radius; }
     };
 
     return api;
