@@ -26,7 +26,7 @@ Game.objects.SpaceShip = function (spec) {
     };
     image.src = spec.imageSrc;
 
-    function newGame() {
+    function startGame() {
         rotation = Math.PI / 2;
         xSpeed = 0; 
         ySpeed = 0; 
@@ -83,6 +83,26 @@ Game.objects.SpaceShip = function (spec) {
         // console.log(xSpeed); console.log(ySpeed); 
     }
 
+    // determine where the ship is and return a spec with 
+    // the current point in the direction of the ship 
+    function shoot() {
+        let center = {
+            x: spaceShip.center.x,
+            y: spaceShip.center.y
+        };
+        let size = {
+            width: 25,
+            height: 15
+        };
+        let spec = {
+            center: center,
+            size: size,
+            speed: 1,
+            rotation: spaceShip.rotation
+        };
+        return spec; 
+    }
+
     function moveTo(pos) {
         spec.center.x = pos.x;
         spec.center.y = pos.y;
@@ -94,7 +114,8 @@ Game.objects.SpaceShip = function (spec) {
         rotateRight: rotateRight,
         thrust: thrust,
         moveTo: moveTo,
-        newGame: newGame,
+        startGame: startGame,
+        shoot: shoot,
         get imageReady() { return imageReady; },
         get rotation() { return rotation; },
         get image() { return image; },

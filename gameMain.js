@@ -4,20 +4,20 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     let inputBuffer = {};
     let gameKeyboard = input.Keyboard();
 
-
     // time
-    let current = performance.now();
-    let past = current;
-    let elapsedTime = current - past; //initialized to 0
-    let accumulatedTime = 0;
+    let lastTimeStamp = performance.now();
+    let elapsedTime = 0; 
     let startTime = performance.now();
     let quit = false;
 
-    // highScores
-    let highScoresInitialized = false;
+    // current score
     let score = 0;
 
-    // objects
+    // ********************************************
+    // ********* Objects for the game *************
+    // ********************************************
+
+    // player spaceship. starts in the middle of the screen
     let spaceShip = objects.SpaceShip({
         imageSrc: 'resources/images/spaceship-main.png',
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2 },
@@ -30,6 +30,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         crashed: false,
     });
 
+    // manager for all lasers fired by player spaceship
     let spaceShipLasers = objects.LaserManager({
         imageSrc: 'resources/images/laser.png',
         maxX: graphics.canvas.height,
@@ -37,24 +38,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         interval: 200 // milliseconds
     });
 
-    function shoot(elapsedTime) {
-        let center = {
-            x: spaceShip.center.x,
-            y: spaceShip.center.y
-        };
-        let size = {
-            width: 25,
-            height: 15
-        };
-        let spec = {
-            center: center,
-            size: size,
-            speed: 1,
-            rotation: spaceShip.rotation
-        };
-        spaceShipLasers.addLaser(spec);
-    }
-
+    // manager for all asteroids in the game
     let asteroidManager = objects.AsteroidManager({
         imageSrc: "resources/images/asteroid.png",
         maxX: graphics.canvas.height,
@@ -66,40 +50,46 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         interval: 1 // seconds
     });
 
+    // ********************************************
+    // *********** Keyboard actions ***************
+    // ********************************************
+
+    function playerShoot() {
+        spaceShipLasers.addLaser(spaceShip.shoot())
+    }
+
     gameKeyboard.register('ArrowUp', spaceShip.thrust);
     gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
     gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
-    gameKeyboard.register('x', shoot);
-    gameKeyboard.register('Space', shoot);
+    gameKeyboard.register(' ', playerShoot);
 
     // ********************************************
-    // *************** Buttons ********************
+    // ********** Changing Game State *************
     // ********************************************
 
-    // restart the game, resetting all needed values
-    function restartButton() {
-        endGame();
+    // start a new game, resetting all objects
+    function startGame() {
         quit = false;
-        highScoreManager.removeHighScoreNotification();
+        score = 0;
         spaceShip.newGame();
-        initialize();
+        startTime = performance.now();
+        requestAnimationFrame(gameLoop);
     }
 
-    function clearHighScores() {
-        highScoreManager.clearHighScores();
-        asteroidManager.addAsteroid({
-            center: {
-                x: 300,
-                y: 300
-            },
-            size: {
-                height: 50,
-                width: 50
-            },
-            rotation: 2.5 * Math.PI / 2,
-            rotationSpeed: Math.PI / 16,
-            speed: -40
+    // stop gameplay, updating state 
+    function endGame() {
+        quit = true;
+        let totalTime = performance.now() - startTime; 
+        score = asteroidManager.asteroidScore;  
+        highScoreManager.endGame(score); 
+    }
+
+    // set up the game the first time it is loaded
+    function initialize() {
+        window.addEventListener('keydown', function (event) {
+            inputBuffer[event.key] = event.key;
         });
+
     }
 
     // ********************************************
@@ -113,6 +103,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         spaceShip.update(elapsedTime);
         spaceShipLasers.update(elapsedTime);
         asteroidManager.detectLaserCollisions(spaceShipLasers);
+        score = asteroidManager.asteroidScore; 
+        highScoreManager.update(elapsedTime, score); 
+
         if (!spaceShip.crashed && asteroidManager.detectCircleCollision(spaceShip.center, spaceShip.radius)) {
             spaceShip.crashed = true;
             endGame(); 
@@ -127,16 +120,13 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         renderer.Laser.render(spaceShipLasers);
         renderer.Asteroid.render(asteroidManager);
         renderer.SpaceShip.render(spaceShip);
-
-        highScoreManager.displayHighScores();
-        highScoreManager.displayCurrentScore(current - startTime, score);
+        highScoreManager.render(); 
     }
 
 
     function gameLoop() {
-        current = performance.now();
-        elapsedTime = current - past;
-        past = current;
+        elapsedTime = performance.now() - lastTimeStamp;
+        lastTimeStamp = performance.now(); 
         update(elapsedTime);
         render();
 
@@ -144,30 +134,20 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
             requestAnimationFrame(gameLoop);
         }
     }
-
-    function initialize() {
-        startTime = performance.now();
-        current = performance.now();
-        past = performance.now();
-        accumulatedTime = 0;
-        
-        score = 0;
-
-        window.addEventListener('keydown', function (event) {
-            inputBuffer[event.key] = event.key;
-        });
-
-        requestAnimationFrame(gameLoop);
-    }
     initialize();
 
-    // quit the game 
-    function endGame() {
-        quit = true;
-        currentTime = performance.now();
-        highScoreManager.checkForHighScores(currentTime - startTime, score);
-        highScoreManager.displayHighScores();
-        highScoreManager.storeHighScores();
+    // ********************************************
+    // *************** Buttons ********************
+    // ********************************************
+
+    // restart the game, resetting all needed values
+    function restartGame() {
+        endGame();
+        startGame(); 
+    }
+
+    function clearHighScores() {
+        highScoreManager.clearHighScores();
     }
 
     function developerCredits() {
@@ -180,7 +160,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     return {
         developerCredits: developerCredits,
         clearHighScores: clearHighScores,
-        restartGame: restartButton
+        restartGame: restartGame
     };
 
 }(Game.objects, Game.render, Game.graphics, Game.input, Game.highScores)); 

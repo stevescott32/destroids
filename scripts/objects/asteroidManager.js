@@ -9,8 +9,9 @@ Game.objects.AsteroidManager = function (managerSpec) {
   console.log('Initializing asteroid manager');
 
   let asteroids = [];
-  let lastTimeCreated = 0;
   let accumulatedTime = 0; 
+  let asteroidScore = 0;
+
   let image = new Image();
   let imageReady = false;
   image.onload = function () {
@@ -29,7 +30,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
         height: asteroidSpec.size.height,
         width: asteroidSpec.size.width
       },
-      radius: (asteroidSpec.size.height + asteroidSpec.size.width) / 4.1,
+      radius: asteroidSpec.radius, 
       xSpeed: Math.cos(asteroidSpec.rotation) * asteroidSpec.speed,
       ySpeed: Math.sin(asteroidSpec.rotation) * asteroidSpec.speed,
       rotationSpeed: asteroidSpec.rotationSpeed,
@@ -51,14 +52,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
   function populateAstroids(elapsedTime) {
     if (accumulatedTime > managerSpec.interval * 1000) {
       accumulatedTime -= managerSpec.interval * 1000;
-      /*let asteroid = {
-        center: { x: Math.random() * managerSpec.maxX, y: Math.random() * managerSpec.maxY },
-        size: { height: 150, width: 150 },
-        radius: 75,
-        rotation: Math.PI / 8,
-        rotationSpeed: Math.PI / 8, // radians per second
-        speed: 100, // pixels per second
-      };*/
+
       let randomSize = Math.random() * 
         (managerSpec.maxSize - managerSpec.minSize) + managerSpec.minSize; 
       let asteroidSpec = {
@@ -70,35 +64,37 @@ Game.objects.AsteroidManager = function (managerSpec) {
             height: randomSize,
             width: randomSize 
         },
-        rotation: 2.5 * Math.PI / 2,
-        rotationSpeed: Math.PI / 16,
-        //speed: -1 * Math.random() * 
-        //  (managerSpec.maxSpeed - managerSpec.minSpeed) + managerSpec.minSpeed, 
+        radius: randomSize / 2,
+        rotation: Math.PI, 
+        rotationSpeed: Math.random() * Math.PI,
         speed: -1 * managerSpec.minSpeed
     };
+    let sign = Math.pow(-1,  Math.floor(Math.random() * 2)); // returns 1 or negative one 
+    asteroidSpec.rotationSpeed = sign * 50 * Math.PI * asteroidSpec.speed / (asteroidSpec.size.width * asteroidSpec.size.height); 
 
       // this switch statement will have asteroids start from 
       // the edges of the game board
       let switcher = Math.floor(Math.random() * 4);
       switch (switcher) {
         case 0:
-          asteroidSpec.center.x = 1;
+          asteroidSpec.center.x = 0 - asteroidSpec.radius;
           break;
         case 1:
-          asteroidSpec.center.x = managerSpec.maxX - 1;
+          asteroidSpec.center.x = managerSpec.maxX + asteroidSpec.radius;
           asteroidSpec.speed *= -1; 
           break;
         case 2:
-          asteroidSpec.center.y = 1;
+          asteroidSpec.center.y = 1 - asteroidSpec.radius;
+          asteroidSpec.rotation += Math.PI / 2
           break;
         case 3:
-          asteroidSpec.center.y = managerSpec.maxY - 1;
+          asteroidSpec.center.y = managerSpec.maxY + asteroidSpec.radius;
+          asteroidSpec.rotation += Math.PI / 2
           asteroidSpec.speed *= -1; 
           break;
       }
 
       asteroids.push(makeAsteroid(asteroidSpec));
-      console.log(asteroids[asteroids.length - 1]); 
     }
     else {
       accumulatedTime += elapsedTime;
@@ -106,6 +102,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
   }
 
   function explode(asteroid) {
+    asteroidScore += 1;
     asteroid.remove = true;
   }
 
@@ -145,10 +142,9 @@ Game.objects.AsteroidManager = function (managerSpec) {
       asteroid.center.y += asteroid.ySpeed * elapsedTime / 1000;
       asteroid.rotation += asteroid.rotationSpeed * elapsedTime / 1000;
 
-      if (asteroid.center.x < 0 || asteroid.center.y < 0 ||
-        asteroid.center.x > managerSpec.maxX || asteroid.center.y > managerSpec.maxY) {
+      if (asteroid.center.x + asteroid.radius < 0 || asteroid.center.y + asteroid.radius < 0 ||
+        asteroid.center.x - asteroid.radius > managerSpec.maxX || asteroid.center.y - asteroid.radius > managerSpec.maxY) {
         asteroid.remove = true;
-        console.log('Setting asteroid to remove');
       }
     }
   }
@@ -161,6 +157,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
     get imageReady() { return imageReady; },
     get image() { return image; },
     get asteroids() { return asteroids; },
+    get asteroidScore() { return asteroidScore; }
   };
 
   return api;
