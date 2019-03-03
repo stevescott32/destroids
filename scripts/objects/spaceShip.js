@@ -20,20 +20,11 @@ Game.objects.SpaceShip = function (spec) {
     let ySpeed = 0; 
     let imageReady = false;
     let image = new Image();
-    let crashed = false; 
 
     image.onload = function () {
         imageReady = true;
     };
     image.src = spec.imageSrc;
-
-    function startGame() {
-        rotation = Math.PI / 2;
-        xSpeed = 0; 
-        ySpeed = 0; 
-        spec.center = { x: spec.canvasWidth / 2, y: spec.canvasHeight / 2};
-        crashed = false; 
-    }
 
     function rotateLeft(elapsedTime) {
         rotation -= spec.rotationRate * (elapsedTime / 100);
@@ -45,25 +36,6 @@ Game.objects.SpaceShip = function (spec) {
         rotation += spec.rotationRate * (elapsedTime / 100);
         if (rotation > 2 * Math.PI) {
             rotation -= 2 * Math.PI;
-        }
-    }
-
-    function update(elapsedTime) {
-        spec.center.x -= xSpeed * (elapsedTime / 100); 
-        spec.center.y -= ySpeed * (elapsedTime / 100); 
-        if(spec.center.x < 0) 
-        {
-            spec.center.x = spec.canvasWidth; 
-        }
-        else if(spec.center.x > spec.canvasWidth) {
-            spec.center.x = 0; 
-        }
-        else if(spec.center.y < 0) 
-        {
-            spec.center.y = spec.canvasHeight; 
-        }
-        else if(spec.center.y > spec.canvasHeight) {
-            spec.center.y = 0; 
         }
     }
 
@@ -82,7 +54,6 @@ Game.objects.SpaceShip = function (spec) {
         else if(ySpeed < -1 * MAX_SPEED) {
             ySpeed -= Math.sin(rotation) * spec.thrust; 
         }
-        // console.log(xSpeed); console.log(ySpeed); 
     }
 
     // determine where the ship is and return a spec with 
@@ -111,6 +82,32 @@ Game.objects.SpaceShip = function (spec) {
         spec.center.y = pos.y;
     }
 
+    function startGame() {
+        rotation = Math.PI / 2;
+        xSpeed = 0; 
+        ySpeed = 0; 
+        spec.center = { x: spec.canvasWidth / 2, y: spec.canvasHeight / 2};
+    }
+
+    function update(elapsedTime) {
+        spec.center.x -= xSpeed * (elapsedTime / 100); 
+        spec.center.y -= ySpeed * (elapsedTime / 100); 
+        if(spec.center.x < 0) 
+        {
+            spec.center.x = spec.canvasWidth; 
+        }
+        else if(spec.center.x > spec.canvasWidth) {
+            spec.center.x = 0; 
+        }
+        else if(spec.center.y < 0) 
+        {
+            spec.center.y = spec.canvasHeight; 
+        }
+        else if(spec.center.y > spec.canvasHeight) {
+            spec.center.y = 0; 
+        }
+    }
+
     let api = {
         update: update,
         rotateLeft: rotateLeft,
@@ -119,7 +116,6 @@ Game.objects.SpaceShip = function (spec) {
         moveTo: moveTo,
         startGame: startGame,
         shoot: shoot,
-//        get crashed() { return crashed; },
         get imageReady() { return imageReady; },
         get rotation() { return rotation; },
         get image() { return image; },

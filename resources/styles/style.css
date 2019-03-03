@@ -2,7 +2,7 @@
   --main-dark: #1c211c;
   --main-txt-color: #cce8cc; 
   --main-greenColor: #4CAF50; 
-  --main-dark-contrast: grey; 
+  --main-dark-contrast: #164c6b; 
 }
 
 h1 {color: var(--main-txt-color);}
