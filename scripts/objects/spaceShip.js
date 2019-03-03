@@ -20,6 +20,7 @@ Game.objects.SpaceShip = function (spec) {
     let ySpeed = 0; 
     let imageReady = false;
     let image = new Image();
+    let crashed = false; 
 
     image.onload = function () {
         imageReady = true;
@@ -31,6 +32,7 @@ Game.objects.SpaceShip = function (spec) {
         xSpeed = 0; 
         ySpeed = 0; 
         spec.center = { x: spec.canvasWidth / 2, y: spec.canvasHeight / 2};
+        crashed = false; 
     }
 
     function rotateLeft(elapsedTime) {
@@ -86,21 +88,22 @@ Game.objects.SpaceShip = function (spec) {
     // determine where the ship is and return a spec with 
     // the current point in the direction of the ship 
     function shoot() {
-        let center = {
-            x: spaceShip.center.x,
-            y: spaceShip.center.y
+        let laserCenter = {
+            x: spec.center.x,
+            y: spec.center.y
         };
-        let size = {
+        let laserSize = {
             width: 25,
             height: 15
         };
-        let spec = {
-            center: center,
-            size: size,
+        let laserRotation = rotation; 
+        let laserSpec = {
+            center: laserCenter,
+            size: laserSize,
             speed: 1,
-            rotation: spaceShip.rotation
+            rotation: laserRotation
         };
-        return spec; 
+        return laserSpec; 
     }
 
     function moveTo(pos) {
@@ -116,6 +119,7 @@ Game.objects.SpaceShip = function (spec) {
         moveTo: moveTo,
         startGame: startGame,
         shoot: shoot,
+//        get crashed() { return crashed; },
         get imageReady() { return imageReady; },
         get rotation() { return rotation; },
         get image() { return image; },

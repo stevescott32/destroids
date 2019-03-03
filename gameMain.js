@@ -71,7 +71,11 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     function startGame() {
         quit = false;
         score = 0;
-        spaceShip.newGame();
+        inputBuffer = {};
+        spaceShip.startGame();
+        asteroidManager.startGame(); 
+        highScoreManager.startGame(); 
+        spaceShip.crashed = false; 
         startTime = performance.now();
         requestAnimationFrame(gameLoop);
     }
@@ -89,7 +93,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         window.addEventListener('keydown', function (event) {
             inputBuffer[event.key] = event.key;
         });
-
+        startGame(); 
     }
 
     // ********************************************

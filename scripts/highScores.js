@@ -68,7 +68,7 @@ Game.highScores = (function () {
   function notifyOfNewHighScore(score, time) {
     let notifyParent = document.getElementById('notify-of-high-score');
 
-    let text = 'You just created a new high score!!!';
+    let text = 'New high score!!!';
     let stats = 'Score: ' + score + ' --> Time: ' + Math.round(time / 1000) + ' seconds';
     let textChild = document.createElement('P');
     let statsChild = document.createElement('P');

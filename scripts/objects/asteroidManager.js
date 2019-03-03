@@ -149,11 +149,18 @@ Game.objects.AsteroidManager = function (managerSpec) {
     }
   }
 
+  function startGame() {
+    asteroids = [];
+    asteroidScore = 0; 
+    accumulatedTime = 0; 
+  }
+
   let api = {
     addAsteroid: addAsteroid,
     detectLaserCollisions: detectLaserCollisions,
     detectCircleCollision, detectCircleCollision,
     update: update,
+    startGame: startGame,
     get imageReady() { return imageReady; },
     get image() { return image; },
     get asteroids() { return asteroids; },
