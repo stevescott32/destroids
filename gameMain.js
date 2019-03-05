@@ -2,7 +2,6 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     console.log('Starting game main');
 
     let inputBuffer = {};
-    let gameKeyboard = input.Keyboard();
 
     // time
     let lastTimeStamp = performance.now();
@@ -16,6 +15,8 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // ********************************************
     // ********* Objects for the game *************
     // ********************************************
+
+    let gameKeyboard = input.Keyboard();
 
     // player spaceship. starts in the middle of the screen
     let spaceShip = objects.SpaceShip({
@@ -45,23 +46,30 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         maxY: graphics.canvas.width,
         maxSize: 200,
         minSize: 50, 
-        maxSpeed: 150,
+        maxSpeed: 100,
         minSpeed: 50,
         interval: 1 // seconds
-    });
+    }, objects);
+
+    let particleSystemManager = objects.ParticleSystemManager({
+
+    }); 
 
     // ********************************************
     // *********** Keyboard actions ***************
     // ********************************************
 
     function playerShoot() {
-        spaceShipLasers.addLaser(spaceShip.shoot())
+        if(!quit) {
+            spaceShipLasers.addLaser(spaceShip.shoot()); 
+        }
     }
 
     gameKeyboard.register('ArrowUp', spaceShip.thrust);
     gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
     gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
     gameKeyboard.register(' ', playerShoot);
+    gameKeyboard.register('n', restartGame); 
 
     // ********************************************
     // ********** Changing Game State *************
@@ -83,7 +91,6 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // stop gameplay, updating state 
     function endGame() {
         quit = true;
-        let totalTime = performance.now() - startTime; 
         score = asteroidManager.asteroidScore;  
         highScoreManager.endGame(score); 
     }
@@ -104,13 +111,17 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     function update(elapsedTime) {
         gameKeyboard.update(elapsedTime);
         asteroidManager.update(elapsedTime);
-        spaceShip.update(elapsedTime);
         spaceShipLasers.update(elapsedTime);
-        asteroidManager.detectLaserCollisions(spaceShipLasers);
+        if(!quit) {
+            spaceShip.update(elapsedTime);
+            asteroidManager.detectLaserCollisions(spaceShipLasers);
+        }
+       // particleSystemManager.update(elapsedTime); 
         score = asteroidManager.asteroidScore; 
         highScoreManager.update(elapsedTime, score); 
 
         if (!spaceShip.crashed && asteroidManager.detectCircleCollision(spaceShip.center, spaceShip.radius)) {
+            particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 
             spaceShip.crashed = true;
             endGame(); 
         }
@@ -123,7 +134,12 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
         renderer.Laser.render(spaceShipLasers);
         renderer.Asteroid.render(asteroidManager);
-        renderer.SpaceShip.render(spaceShip);
+        if(!quit) {
+            renderer.SpaceShip.render(spaceShip); 
+        }
+        //let effects = particleSystemManager.effects; 
+        //renderer.ParticleSystemManager.render(effects);
+
         highScoreManager.render(); 
     }
 
@@ -134,9 +150,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         update(elapsedTime);
         render();
 
-        if (!quit) {
-            requestAnimationFrame(gameLoop);
-        }
+        requestAnimationFrame(gameLoop);
     }
     initialize();
 

@@ -11,6 +11,7 @@
 // --------------------------------------------------------------
 Game.render.Asteroid = (function(graphics) {
   'use strict';
+  console.log('Starting asteroid rendering'); 
 
   function render(asteroidManager) {
     let asteroids = asteroidManager.asteroids; 

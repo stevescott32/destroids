@@ -45,7 +45,6 @@ Game.objects.AsteroidManager = function (managerSpec) {
   // spec: 
   // x, y, rotation, speed
   function addAsteroid(spec) {
-    console.log(spec);
     asteroids.push(makeAsteroid(spec));
   }
 
@@ -63,20 +62,23 @@ Game.objects.AsteroidManager = function (managerSpec) {
         (managerSpec.maxSize - managerSpec.minSize) + managerSpec.minSize; 
       let asteroidSpec = {
         center: {
-            x: Math.random() * managerSpec.maxX,
-            y: Math.random() * managerSpec.maxY,
+            x: Random.nextGaussian(managerSpec.maxX / 2, managerSpec.maxX / 4), 
+            y: Random.nextGaussian(managerSpec.maxY / 2, managerSpec.maxY / 4), 
         },
         size: {
             height: randomSize,
             width: randomSize 
         },
         radius: randomSize / 2,
-        rotation: Math.PI, 
+        rotation: Random.nextGaussian(Math.PI, Math.PI / 8), 
         rotationSpeed: Math.random() * Math.PI,
         speed: -1 * managerSpec.minSpeed
     };
     let sign = Math.pow(-1,  Math.floor(Math.random() * 2)); // returns 1 or negative one 
     asteroidSpec.rotationSpeed = sign * 50 * Math.PI * asteroidSpec.speed / (asteroidSpec.size.width * asteroidSpec.size.height); 
+    asteroidSpec.speed = -1 * Random.nextGaussian(
+      ((managerSpec.maxSpeed - managerSpec.minSpeed) / 2 ) + managerSpec.minSpeed, 
+      (managerSpec.maxSpeed - managerSpec.minSpeed) / 4 ) / asteroidSpec.size.height * managerSpec.maxSize; 
 
       // this switch statement will have asteroids start from 
       // the edges of the game board
