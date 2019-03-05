@@ -48,7 +48,8 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         minSize: 65, 
         maxSpeed: 100,
         minSpeed: 50,
-        interval: 2 // seconds
+        interval: 2, // seconds
+        asteroidsInLevel: 40
     }, objects);
 
     let particleSystemManager = objects.ParticleSystemManager({

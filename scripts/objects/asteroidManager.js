@@ -12,6 +12,9 @@ Game.objects.AsteroidManager = function (managerSpec) {
   let accumulatedTime = 0;
   let asteroidScore = 0;
 
+  let asteroidsToMake = managerSpec.asteroidsInLevel; 
+  let asteroidsMade = 0; 
+
   let image = new Image();
   let imageReady = false;
   image.onload = function () {
@@ -20,6 +23,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
   image.src = managerSpec.imageSrc;
 
   function asteroidMaker(asteroidSpec) {
+    asteroidsMade++; 
     // speed follows gaussian distribution divided by the size 
     let speed = -1 * Random.nextGaussian(
       ((managerSpec.maxSpeed - managerSpec.minSpeed) / 2) + managerSpec.minSpeed,
@@ -76,16 +80,12 @@ Game.objects.AsteroidManager = function (managerSpec) {
         break;
       case 1:
         center.x = managerSpec.maxX + sizeCategory * managerSpec.minSize / 2;
-        //asteroidSpec.speed *= -1;
         break;
       case 2:
         center.y = 1 - sizeCategory * managerSpec.minSize / 2;
-        //asteroidSpec.rotation += Math.PI / 2
         break;
       case 3:
         center.y = managerSpec.maxY + sizeCategory * managerSpec.minSize / 2;
-        //asteroidSpec.rotation += Math.PI / 2
-        //asteroidSpec.speed *= -1;
         break;
     }
     return asteroidMaker({
@@ -104,7 +104,9 @@ Game.objects.AsteroidManager = function (managerSpec) {
     if (accumulatedTime > managerSpec.interval * 1000) {
       accumulatedTime -= managerSpec.interval * 1000;
 
-      asteroids.push(generateNewAsteroid());
+      if(asteroidsMade < asteroidsToMake) {
+        asteroids.push(generateNewAsteroid());
+      }
     }
     else {
       accumulatedTime += elapsedTime;
