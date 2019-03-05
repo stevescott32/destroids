@@ -9,7 +9,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
   console.log('Initializing asteroid manager');
 
   let asteroids = [];
-  let accumulatedTime = 0; 
+  let accumulatedTime = 0;
   let asteroidScore = 0;
 
   let image = new Image();
@@ -19,22 +19,34 @@ Game.objects.AsteroidManager = function (managerSpec) {
   };
   image.src = managerSpec.imageSrc;
 
-  function makeAsteroid(asteroidSpec) {
+  function asteroidMaker(asteroidSpec) {
+    // speed follows gaussian distribution divided by the size 
+    let speed = -1 * Random.nextGaussian(
+      ((managerSpec.maxSpeed - managerSpec.minSpeed) / 2) + managerSpec.minSpeed,
+      (managerSpec.maxSpeed - managerSpec.minSpeed) / 4)
+      / (asteroidSpec.sizeCategory);
+
+    // larger asteroids rotate more slowely 
+    let sign = Math.pow(-1, Math.floor(Math.random() * 2)); // returns 1 or negative one 
+    let rotationSpeed = sign * Math.PI * speed / (asteroidSpec.sizeCategory * managerSpec.minSize);
+
+    let rotation = Math.random() * Math.PI * 2;
+
     let asteroid = {
-      //center: center,
       center: {
         x: asteroidSpec.center.x,
         y: asteroidSpec.center.y
       },
       size: {
-        height: asteroidSpec.size.height,
-        width: asteroidSpec.size.width
+        height: managerSpec.minSize * asteroidSpec.sizeCategory,
+        width: managerSpec.minSize * asteroidSpec.sizeCategory,
+        sizeCategory: asteroidSpec.sizeCategory
       },
-      radius: asteroidSpec.radius, 
-      xSpeed: Math.cos(asteroidSpec.rotation) * asteroidSpec.speed,
-      ySpeed: Math.sin(asteroidSpec.rotation) * asteroidSpec.speed,
-      rotationSpeed: asteroidSpec.rotationSpeed,
-      rotation: asteroidSpec.rotation,
+      radius: managerSpec.minSize * asteroidSpec.sizeCategory / 2,
+      xSpeed: Math.cos(rotation) * speed,
+      ySpeed: Math.sin(rotation) * speed,
+      rotation: rotation,
+      rotationSpeed: rotationSpeed,
       break: false,
       remove: false
     };
@@ -42,67 +54,57 @@ Game.objects.AsteroidManager = function (managerSpec) {
     return asteroid;
   }
 
-  // spec: 
-  // x, y, rotation, speed
-  function addAsteroid(spec) {
-    asteroids.push(makeAsteroid(spec));
+  function generateBrokenAsteroid(x, y, sizeCategory) {
+    return asteroidMaker({
+      center: { x: x, y: y },
+      sizeCategory: sizeCategory,
+    });
+  }
+
+  function generateNewAsteroid() {
+    let sizeCategory = Math.ceil(Math.random() * 3);
+    let center = {
+      x: Random.nextGaussian(managerSpec.maxX / 2, managerSpec.maxX / 4),
+      y: Random.nextGaussian(managerSpec.maxY / 2, managerSpec.maxY / 4),
+    }
+    // this switch statement will have asteroids start from 
+    // the edges of the game board
+    let switcher = Math.floor(Math.random() * 4);
+    switch (switcher) {
+      case 0:
+        center.x = 0 - sizeCategory * managerSpec.minSize / 2;
+        break;
+      case 1:
+        center.x = managerSpec.maxX + sizeCategory * managerSpec.minSize / 2;
+        //asteroidSpec.speed *= -1;
+        break;
+      case 2:
+        center.y = 1 - sizeCategory * managerSpec.minSize / 2;
+        //asteroidSpec.rotation += Math.PI / 2
+        break;
+      case 3:
+        center.y = managerSpec.maxY + sizeCategory * managerSpec.minSize / 2;
+        //asteroidSpec.rotation += Math.PI / 2
+        //asteroidSpec.speed *= -1;
+        break;
+    }
+    return asteroidMaker({
+      center: center,
+      sizeCategory: sizeCategory
+    });
   }
 
   function populateAstroids(elapsedTime) {
     // if the script has been paused by the browser or something, 
     // we don't want to create a wall of astroids from all directions 
-    if(accumulatedTime > 2 * managerSpec.interval * 1000) {
-      accumulatedTime = 2 * managerSpec.interval * 1000; 
+    if (accumulatedTime > 2 * managerSpec.interval * 1000) {
+      accumulatedTime = 2 * managerSpec.interval * 1000;
     }
     // if we didn't generate an asteroid recently, make one 
     if (accumulatedTime > managerSpec.interval * 1000) {
       accumulatedTime -= managerSpec.interval * 1000;
 
-      let randomSize = Math.random() * 
-        (managerSpec.maxSize - managerSpec.minSize) + managerSpec.minSize; 
-      let asteroidSpec = {
-        center: {
-            x: Random.nextGaussian(managerSpec.maxX / 2, managerSpec.maxX / 4), 
-            y: Random.nextGaussian(managerSpec.maxY / 2, managerSpec.maxY / 4), 
-        },
-        size: {
-            height: randomSize,
-            width: randomSize 
-        },
-        radius: randomSize / 2,
-        rotation: Random.nextGaussian(Math.PI, Math.PI / 8), 
-        rotationSpeed: Math.random() * Math.PI,
-        speed: -1 * managerSpec.minSpeed
-    };
-    let sign = Math.pow(-1,  Math.floor(Math.random() * 2)); // returns 1 or negative one 
-    asteroidSpec.rotationSpeed = sign * 50 * Math.PI * asteroidSpec.speed / (asteroidSpec.size.width * asteroidSpec.size.height); 
-    asteroidSpec.speed = -1 * Random.nextGaussian(
-      ((managerSpec.maxSpeed - managerSpec.minSpeed) / 2 ) + managerSpec.minSpeed, 
-      (managerSpec.maxSpeed - managerSpec.minSpeed) / 4 ) / asteroidSpec.size.height * managerSpec.maxSize; 
-
-      // this switch statement will have asteroids start from 
-      // the edges of the game board
-      let switcher = Math.floor(Math.random() * 4);
-      switch (switcher) {
-        case 0:
-          asteroidSpec.center.x = 0 - asteroidSpec.radius;
-          break;
-        case 1:
-          asteroidSpec.center.x = managerSpec.maxX + asteroidSpec.radius;
-          asteroidSpec.speed *= -1; 
-          break;
-        case 2:
-          asteroidSpec.center.y = 1 - asteroidSpec.radius;
-          asteroidSpec.rotation += Math.PI / 2
-          break;
-        case 3:
-          asteroidSpec.center.y = managerSpec.maxY + asteroidSpec.radius;
-          asteroidSpec.rotation += Math.PI / 2
-          asteroidSpec.speed *= -1; 
-          break;
-      }
-
-      asteroids.push(makeAsteroid(asteroidSpec));
+      asteroids.push(generateNewAsteroid());
     }
     else {
       accumulatedTime += elapsedTime;
@@ -112,6 +114,12 @@ Game.objects.AsteroidManager = function (managerSpec) {
   function explode(asteroid) {
     asteroidScore += 1;
     asteroid.remove = true;
+    if (asteroid.size.sizeCategory > 1) {
+      let numToGenerate = 3 + (3 % asteroid.size.sizeCategory);
+      for (let a = 0; a < numToGenerate; a++) {
+        asteroids.push(generateBrokenAsteroid(asteroid.center.x, asteroid.center.y, asteroid.size.sizeCategory - 1));
+      }
+    }
   }
 
 
@@ -143,28 +151,37 @@ Game.objects.AsteroidManager = function (managerSpec) {
     if (asteroids[0] && asteroids[0].remove) {
       asteroids.shift();
     }
-    populateAstroids(elapsedTime); 
+    populateAstroids(elapsedTime);
     for (let a = 0; a < asteroids.length; a++) {
       let asteroid = asteroids[a];
       asteroid.center.x += asteroid.xSpeed * elapsedTime / 1000;
       asteroid.center.y += asteroid.ySpeed * elapsedTime / 1000;
       asteroid.rotation += asteroid.rotationSpeed * elapsedTime / 1000;
 
-      if (asteroid.center.x + asteroid.radius < 0 || asteroid.center.y + asteroid.radius < 0 ||
-        asteroid.center.x - asteroid.radius > managerSpec.maxX || asteroid.center.y - asteroid.radius > managerSpec.maxY) {
-        asteroid.remove = true;
+      if(asteroid.center.x + asteroid.radius < 0) 
+      {
+          asteroid.center.x = managerSpec.maxX + asteroid.radius; 
+      }
+      else if(asteroid.center.x - asteroid.radius > managerSpec.maxX) {
+          asteroid.center.x = 0 - asteroid.radius; 
+      }
+      else if(asteroid.center.y + asteroid.radius < 0) 
+      {
+          asteroid.center.y = managerSpec.maxY + asteroid.radius; 
+      }
+      else if(asteroid.center.y - asteroid.radius > managerSpec.maxY) {
+          asteroid.center.y = 0 - asteroid.radius; 
       }
     }
   }
 
   function startGame() {
     asteroids = [];
-    asteroidScore = 0; 
-    accumulatedTime = 0; 
+    asteroidScore = 0;
+    accumulatedTime = 0;
   }
 
   let api = {
-    addAsteroid: addAsteroid,
     detectLaserCollisions: detectLaserCollisions,
     detectCircleCollision, detectCircleCollision,
     update: update,

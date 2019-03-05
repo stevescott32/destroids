@@ -45,10 +45,10 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         maxSize: 200,
-        minSize: 50, 
+        minSize: 65, 
         maxSpeed: 100,
         minSpeed: 50,
-        interval: 1 // seconds
+        interval: 2 // seconds
     }, objects);
 
     let particleSystemManager = objects.ParticleSystemManager({
