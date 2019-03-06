@@ -11,7 +11,6 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
     // current state
     let score = 0;
-    let livesLeft = 3; 
 
     // ********************************************
     // ********* Objects for the game *************

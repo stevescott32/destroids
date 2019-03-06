@@ -4,31 +4,44 @@
  * managerSpec = { lives: }
  */
 Game.objects.LifeManager = (function (managerSpec) {
-  console.log('Initializing life manager'); 
-  let livesLeft = managerSpec.lives; 
+  console.log('Initializing life manager');
+  let livesLeft = managerSpec.lives;
 
   function loseLife() {
-    livesLeft--; 
+    livesLeft--;
+    displayLivesLeft(); 
   }
 
   function startGame() {
-    livesLeft = managerSpec.lives; 
+    livesLeft = managerSpec.lives;
+    displayLivesLeft(); 
   }
 
   function isGameOver() {
-    return (livesLeft < 1); 
+    return (livesLeft < 1);
   }
 
-  function render() {
-    console.log('Rendering life manager'); 
+  function displayLivesLeft() {
+    let livesLeftElement = document.getElementById('id-lives-left');
+    if (livesLeftElement) {
+      while (livesLeftElement.firstChild) {
+        livesLeftElement.removeChild(livesLeftElement.firstChild);
+      }
+      let pElement = document.createElement('p');
+      let textElement = document.createTextNode('Lives Left: ' + livesLeft); 
+      pElement.appendChild(textElement);
+      livesLeftElement.appendChild(pElement);
+    }
+    else {
+      console.log("Error: livesLeftElement not found"); 
+    }
   }
 
   let api = {
     startGame: startGame,
     loseLife: loseLife,
-    isGameOver: isGameOver,
-    render: render
+    isGameOver: isGameOver
   };
 
-  return api; 
+  return api;
 }); 
