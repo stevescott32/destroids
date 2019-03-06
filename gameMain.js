@@ -9,8 +9,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     let startTime = performance.now();
     let quit = false;
 
-    // current score
+    // current state
     let score = 0;
+    let livesLeft = 3; 
 
     // ********************************************
     // ********* Objects for the game *************
@@ -52,6 +53,10 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         asteroidsInLevel: 40
     }, objects);
 
+    let lifeManager = objects.LifeManager({
+        lives: 3
+    }); 
+
     let particleSystemManager = objects.ParticleSystemManager({
 
     }); 
@@ -81,6 +86,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         quit = false;
         score = 0;
         inputBuffer = {};
+        lifeManager.startGame(); 
         spaceShip.startGame();
         asteroidManager.startGame(); 
         highScoreManager.startGame(); 
@@ -124,7 +130,14 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         if (!spaceShip.crashed && asteroidManager.detectCircleCollision(spaceShip.center, spaceShip.radius)) {
             particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 
             spaceShip.crashed = true;
-            endGame(); 
+            lifeManager.loseLife(); 
+            if(lifeManager.isGameOver()) {
+                endGame(); 
+            }
+            else {
+                spaceShip.crashed = false; 
+                spaceShip.startGame(); 
+            }
         }
     }
 
