@@ -82,6 +82,13 @@ Game.objects.SpaceShip = function (spec) {
         spec.center.y = pos.y;
     }
 
+    function hyperspace() {
+        spec.center.x = 750;
+        spec.center.y = 750; 
+        xSpeed = 0; 
+        ySpeed = 0;
+    }
+
     function startGame() {
         rotation = Math.PI / 2;
         xSpeed = 0; 
@@ -110,12 +117,13 @@ Game.objects.SpaceShip = function (spec) {
 
     let api = {
         update: update,
+        startGame: startGame,
         rotateLeft: rotateLeft,
         rotateRight: rotateRight,
         thrust: thrust,
         moveTo: moveTo,
-        startGame: startGame,
         shoot: shoot,
+        hyperspace: hyperspace,
         get imageReady() { return imageReady; },
         get rotation() { return rotation; },
         get image() { return image; },

@@ -48,8 +48,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         minSize: 65, 
         maxSpeed: 100,
         minSpeed: 50,
-        interval: 2, // seconds
-        asteroidsInLevel: 40
+        interval: 4, // seconds
+        asteroidsInLevel: 50,
+        initialAsteroids: 5
     }, objects);
 
     let lifeManager = objects.LifeManager({
@@ -75,6 +76,8 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
     gameKeyboard.register(' ', playerShoot);
     gameKeyboard.register('n', restartGame); 
+    gameKeyboard.register('z', spaceShip.hyperspace); 
+    gameKeyboard.register('Z', spaceShip.hyperspace); 
 
     // ********************************************
     // ********** Changing Game State *************
@@ -122,7 +125,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
             spaceShip.update(elapsedTime);
             asteroidManager.detectLaserCollisions(spaceShipLasers);
         }
-       // particleSystemManager.update(elapsedTime); 
+        particleSystemManager.update(elapsedTime); 
         score = asteroidManager.asteroidScore; 
         highScoreManager.update(elapsedTime, score); 
 
@@ -136,6 +139,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
             else {
                 spaceShip.crashed = false; 
                 spaceShip.startGame(); 
+                spaceShip.hyperspace(); 
             }
         }
     }
@@ -151,7 +155,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
             renderer.SpaceShip.render(spaceShip); 
         }
         //let effects = particleSystemManager.effects; 
-        //renderer.ParticleSystemManager.render(effects);
+        renderer.ParticleSystemManager.render(particleSystemManager);
 
         highScoreManager.render(); 
     }
@@ -185,7 +189,8 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         let message = "Game Development: Steven Scott"
             + "\nGame Testing: Shane Canfield, Katie Taylor"
             + "\nGame Art: http://millionthvector.blogspot.de"
-            + "https://ya-webdesign.com/download.html?utm_source=gg#gal_445279";
+            + "https://ya-webdesign.com/download.html?utm_source=gg#gal_445279"
+            + "http://www.freeimageslive.com/galleries/space/nebula/pics/hst_carina_ngc3372_0006.jpg"; 
         alert(message);
     }
     return {
