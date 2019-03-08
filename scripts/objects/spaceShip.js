@@ -84,6 +84,17 @@ Game.objects.SpaceShip = function (spec) {
         spec.center.y = pos.y;
     }
 
+    function detectCircleCollision(objectToAvoid, center, radius) {
+          let distanceSquared = Math.pow(center.x - objectToAvoid.center.x, 2) + Math.pow(center.y - objectToAvoid.center.y, 2);
+          let radiusSum = objectToAvoid.radius + radius;
+          if (!objectToAvoid.remove && radiusSum * radiusSum > distanceSquared) {
+            return true;
+          }
+          else {
+            return false; 
+          }
+      }
+
     function calculateSafety(objectsToAvoid, xPos, yPos) {
         let safetyScore = 0; 
 
@@ -93,9 +104,12 @@ Game.objects.SpaceShip = function (spec) {
             if(!isNaN(additionalSafety)) {
                 safetyScore += additionalSafety; 
             }
+            // detect if there is an asteroid within 2 * radius of the ship and break 
+            if(detectCircleCollision(avoid, { x: xPos, y: yPos }, spec.radius * 2)) {
+                safetyScore = 0; 
+                break; 
+            }
         }
-
-        if(isNaN(safetyScore)) { console.log('Error: NaN danger score'); } 
 
         let api = {
             get xPos() { return xPos; },
@@ -103,19 +117,16 @@ Game.objects.SpaceShip = function (spec) {
             get safetyScore() { return safetyScore; }
         }
 
-        console.log('Safety score calculated: ' + safetyScore); 
-
         return api; 
     }
 
     function hyperspace(objectsToAvoid) {
         if(performance.now() - lastHyperSpaceTime > hyperspaceInterval) {
-            console.log('Entering hyperspace!'); 
             lastHyperSpaceTime = performance.now(); 
             let possibleLocations = []; 
             // calculate the danger of each space ship location
-            for(let x = 0 + spec.size.width; x < spec.canvasWidth; x += 2 * spec.size.width) {
-                for(let y = 0 + spec.size.height; y < spec.canvasHeight; y += 2 * spec.size.height) {
+            for(let x = 2 * spec.size.width; x < spec.canvasWidth - (2 * spec.size.width); x += 2 * spec.size.width) {
+                for(let y = 2 * spec.size.height; y < spec.canvasHeight - (2 * spec.size.height); y += 2 * spec.size.height) {
                     possibleLocations.push(calculateSafety(objectsToAvoid, x, y)); 
                 }
             }
@@ -123,13 +134,10 @@ Game.objects.SpaceShip = function (spec) {
             // set the location to the least dangerous spot 
             let mostSafe = { x: 500, y: 500, safetyScore: 0 }; 
             for(let d = 0; d < possibleLocations.length; d++) {
-                console.log('Safety score: ' + possibleLocations[d].safetyScore + ' at ' + 
-                    possibleLocations[d].xPos + ': ' + possibleLocations[d].yPos); 
                 if(possibleLocations[d].safetyScore > mostSafe.safetyScore) {
                     mostSafe = possibleLocations[d]; 
                 }
             }
-            console.log(mostSafe); 
             spec.center.x = mostSafe.xPos;
             spec.center.y = mostSafe.yPos; 
             xSpeed = 0; 
