@@ -20,6 +20,8 @@ Game.objects.SpaceShip = function (spec) {
     let ySpeed = 0; 
     let imageReady = false;
     let image = new Image();
+    let lastHyperSpaceTime = 0; 
+    let hyperspaceInterval = spec.hyperspaceInterval * 1000 // miliseconds
 
     image.onload = function () {
         imageReady = true;
@@ -82,11 +84,57 @@ Game.objects.SpaceShip = function (spec) {
         spec.center.y = pos.y;
     }
 
-    function hyperspace() {
-        spec.center.x = 750;
-        spec.center.y = 750; 
-        xSpeed = 0; 
-        ySpeed = 0;
+    function calculateSafety(objectsToAvoid, xPos, yPos) {
+        let safetyScore = 0; 
+
+        for(let a = 0; a < objectsToAvoid.length; a++) {
+            let avoid = objectsToAvoid[a]; 
+            let additionalSafety = Math.pow(xPos - avoid.center.x, 2) + Math.pow(yPos - avoid.center.y, 2);
+            if(!isNaN(additionalSafety)) {
+                safetyScore += additionalSafety; 
+            }
+        }
+
+        if(isNaN(safetyScore)) { console.log('Error: NaN danger score'); } 
+
+        let api = {
+            get xPos() { return xPos; },
+            get yPos() { return yPos; },
+            get safetyScore() { return safetyScore; }
+        }
+
+        console.log('Safety score calculated: ' + safetyScore); 
+
+        return api; 
+    }
+
+    function hyperspace(objectsToAvoid) {
+        if(performance.now() - lastHyperSpaceTime > hyperspaceInterval) {
+            console.log('Entering hyperspace!'); 
+            lastHyperSpaceTime = performance.now(); 
+            let possibleLocations = []; 
+            // calculate the danger of each space ship location
+            for(let x = 0 + spec.size.width; x < spec.canvasWidth; x += 2 * spec.size.width) {
+                for(let y = 0 + spec.size.height; y < spec.canvasHeight; y += 2 * spec.size.height) {
+                    possibleLocations.push(calculateSafety(objectsToAvoid, x, y)); 
+                }
+            }
+
+            // set the location to the least dangerous spot 
+            let mostSafe = { x: 500, y: 500, safetyScore: 0 }; 
+            for(let d = 0; d < possibleLocations.length; d++) {
+                console.log('Safety score: ' + possibleLocations[d].safetyScore + ' at ' + 
+                    possibleLocations[d].xPos + ': ' + possibleLocations[d].yPos); 
+                if(possibleLocations[d].safetyScore > mostSafe.safetyScore) {
+                    mostSafe = possibleLocations[d]; 
+                }
+            }
+            console.log(mostSafe); 
+            spec.center.x = mostSafe.xPos;
+            spec.center.y = mostSafe.yPos; 
+            xSpeed = 0; 
+            ySpeed = 0;
+        }
     }
 
     function startGame() {

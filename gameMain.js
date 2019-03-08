@@ -29,6 +29,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         thrust: 500 / 1000,
         rotationRate: Math.PI / 16, // radians per second
         crashed: false,
+        hyperspaceInterval: 5 // seconds
     });
 
     // manager for all lasers fired by player spaceship
@@ -71,13 +72,17 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         }
     }
 
+    function hyperspace() {
+        spaceShip.hyperspace(asteroidManager.asteroids);  
+    }
+
     gameKeyboard.register('ArrowUp', spaceShip.thrust);
     gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
     gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
     gameKeyboard.register(' ', playerShoot);
     gameKeyboard.register('n', restartGame); 
-    gameKeyboard.register('z', spaceShip.hyperspace); 
-    gameKeyboard.register('Z', spaceShip.hyperspace); 
+    gameKeyboard.register('z', hyperspace); 
+    gameKeyboard.register('Z', hyperspace); 
 
     // ********************************************
     // ********** Changing Game State *************
@@ -139,7 +144,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
             else {
                 spaceShip.crashed = false; 
                 spaceShip.startGame(); 
-                spaceShip.hyperspace(); 
+                spaceShip.hyperspace(asteroidManager.asteroids); 
             }
         }
     }
