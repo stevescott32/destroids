@@ -35,6 +35,17 @@ Game.graphics = (function() {
         context.restore();
     }
 
+    function drawCircle(x, y, radius) {
+        context.save(); 
+
+        context.beginPath();
+        context.arc(x, y, radius, 0, 2 * Math.PI); 
+        context.strokeStyle = "green"; 
+        context.stroke(); 
+
+        context.restore(); 
+    }
+
     function drawText(spec) {
         context.save();
 
@@ -59,7 +70,8 @@ Game.graphics = (function() {
         get context() { return context; }, 
         clear: clear,
         drawTexture: drawTexture,
-        drawText: drawText
+        drawText: drawText, 
+        drawCircle: drawCircle
     };
 
     return api;

@@ -1,4 +1,4 @@
-Game.objects.ParticleSystemManager = function (managerSpec) {
+/*Game.objects.ParticleSystemManager = function (managerSpec) {
     let effects = []; 
 
     function makeParticleEffect(spec) {
@@ -109,3 +109,96 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
 
     return api; 
 };
+
+*/
+
+Game.objects.ParticleSystemManager = function (managerSpec) {
+    let effects = []; 
+
+    function makeEffect(effectSpec) {
+        console.log('Making effect'); 
+        let radius = effectSpec.radius; 
+        let rate = effectSpec.rate; 
+        let lifeTime = effectSpec.lifeTime * 1000;  
+        let timeAlive = 0; // miliseconds 
+        let xPos = effectSpec.xPos; 
+        let yPos = effectSpec.yPos; 
+        
+
+        function update(elapsedTime) {
+            //radius += rate * elapsedTime / 1000; 
+            //timeAlive += elapsedTime; 
+        }
+
+        function isDead() {
+            if(timeAlive > lifeTime) {
+                console.log('Effect is dead!'); 
+                return true; 
+            } else {
+                return false; 
+            }
+        }
+
+        let api = {
+            get radius() { return radius; }, 
+            get xPos() { return xPos; },
+            get yPos() { return yPos; }, 
+            isDead: isDead,
+            update: update
+        }
+
+        return api; 
+    }
+
+    function createAsteroidBreakup(xPos, yPos) {
+        effects.push(makeEffect({
+            radius: 10,
+            rate: 1 / 15,
+            lifeTime: 5,
+            xPos: xPos,
+            yPos: yPos
+        })); 
+
+    }
+
+    function createShipExplosion(xPos, yPos) {
+        effects.push(makeEffect({
+            radius: 10,
+            rate: 1 / 15,
+            lifeTime: 5,
+            xPos: xPos,
+            yPos: yPos
+        })); 
+    }
+
+    function createUFOExplosion(xPos, yPos) {
+        effects.push(makeEffect({
+            radius: 10,
+            rate: 1 / 25,
+            lifeTime: 5,
+            xPos: xPos,
+            yPos: yPos
+        })); 
+
+    }
+
+    function update(elapsedTime) {
+        if(effects[0] && effects[0].isDead) {
+            effects.shift(); 
+        }
+        for(let e = 0; e < effects.length; e++) {
+            effects[e].update(elapsedTime); 
+        }
+
+    }
+
+    let api = {
+        createShipExplosion: createShipExplosion,
+        createAsteroidBreakup: createAsteroidBreakup,
+        createUFOExplosion: createUFOExplosion,
+        update: update,
+        get effects() { return effects; } 
+    }
+
+    return api;
+}

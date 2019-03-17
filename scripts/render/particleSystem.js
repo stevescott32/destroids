@@ -36,6 +36,7 @@
 // }
 //
 // --------------------------------------------------------------
+/*
 Game.render.ParticleSystemManager = (function (graphics) {
     'use strict';
 
@@ -102,4 +103,20 @@ Game.render.ParticleSystemManager = (function (graphics) {
         render: render
     };
     */
-}(Game.graphics));
+//}(Game.graphics));
+
+Game.render.ParticleSystemManager = (function(graphics) {
+    'use strict';
+
+    function render(particleSystemManager) {
+        let effects = particleSystemManager.effects; 
+        for(let e = 0; e < effects.length; e++) {
+            let effect = effects[e]; 
+            graphics.drawCircle(effect.xPos, effect.yPos, effect.radius); 
+        }
+    }
+
+    return {
+        render: render
+    };
+}(Game.graphics))
