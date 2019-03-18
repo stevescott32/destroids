@@ -49,9 +49,9 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         minSize: 65, 
         maxSpeed: 100,
         minSpeed: 50,
-        interval: 4, // seconds
-        asteroidsInLevel: 50,
-        initialAsteroids: 5
+        interval: 1, // seconds
+        maxAsteroids: 20,
+        initialAsteroids: 10
     }, objects);
 
     let lifeManager = objects.LifeManager({
