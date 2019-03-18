@@ -1,4 +1,4 @@
-Game = (function (objects, renderer, graphics, input, highScoreManager) {
+Game.screens['game-play'] = (function (game, objects, renderer, graphics, input, highScoreManager) {
     console.log('Starting game main');
 
     let inputBuffer = {};
@@ -6,11 +6,11 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // time
     let lastTimeStamp = performance.now();
     let elapsedTime = 0; 
-    let startTime = performance.now();
     let quit = false;
 
     // current state
     let score = 0;
+    let cancelNextRequest = true; 
 
     // ********************************************
     // ********* Objects for the game *************
@@ -73,16 +73,15 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     }
 
     function hyperspace() {
-        spaceShip.hyperspace(asteroidManager.asteroids);  
+        spaceShip.playerHyperspace(asteroidManager.asteroids);  
     }
 
-    gameKeyboard.register('ArrowUp', spaceShip.thrust);
-    gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
-    gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
-    gameKeyboard.register(' ', playerShoot);
-    gameKeyboard.register('n', restartGame); 
-    gameKeyboard.register('z', hyperspace); 
-    gameKeyboard.register('Z', hyperspace); 
+    function escape() {
+        cancelNextRequest = true; 
+        game.showScreen('main-menu'); 
+    }
+
+    
 
     // ********************************************
     // ********** Changing Game State *************
@@ -105,6 +104,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // stop gameplay, updating state 
     function endGame() {
         quit = true;
+        cancelNextRequest = true; 
         score = asteroidManager.asteroidScore;  
         highScoreManager.endGame(score); 
     }
@@ -114,6 +114,21 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         window.addEventListener('keydown', function (event) {
             inputBuffer[event.key] = event.key;
         });
+
+        gameKeyboard.register('ArrowUp', spaceShip.thrust);
+        gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
+        gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
+        gameKeyboard.register(' ', playerShoot);
+        gameKeyboard.register('n', restartGame); 
+        gameKeyboard.register('z', hyperspace); 
+        gameKeyboard.register('Z', hyperspace); 
+        gameKeyboard.register('Escape', escape); 
+    }
+
+    function run() {
+        console.log('Running gameMain'); 
+        lastTimeStamp = performance.now(); 
+        cancelNextRequest = false; 
         startGame(); 
     }
 
@@ -144,7 +159,7 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
             else {
                 spaceShip.crashed = false; 
                 spaceShip.startGame(); 
-                spaceShip.hyperspace(asteroidManager.asteroids); 
+                spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
             }
         }
     }
@@ -172,9 +187,10 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         update(elapsedTime);
         render();
 
-        requestAnimationFrame(gameLoop);
+        if(!cancelNextRequest) {
+            requestAnimationFrame(gameLoop);
+        }
     }
-    initialize();
 
     // ********************************************
     // *************** Buttons ********************
@@ -190,18 +206,11 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         highScoreManager.clearHighScores();
     }
 
-    function developerCredits() {
-        let message = "Game Development: Steven Scott"
-            + "\nGame Testing: Shane Canfield, Katie Taylor"
-            + "\nGame Art: http://millionthvector.blogspot.de"
-            + "https://ya-webdesign.com/download.html?utm_source=gg#gal_445279"
-            + "http://www.freeimageslive.com/galleries/space/nebula/pics/hst_carina_ngc3372_0006.jpg"; 
-        alert(message);
-    }
     return {
-        developerCredits: developerCredits,
         clearHighScores: clearHighScores,
-        restartGame: restartGame
+        restartGame: restartGame,
+        run: run,
+        initialize: initialize
     };
 
-}(Game.objects, Game.render, Game.graphics, Game.input, Game.highScores)); 
+}(Game.game, Game.objects, Game.render, Game.graphics, Game.input, Game.highScores)); 
