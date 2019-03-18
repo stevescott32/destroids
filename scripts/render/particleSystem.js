@@ -112,6 +112,7 @@ Game.render.ParticleSystemManager = (function(graphics) {
         let effects = particleSystemManager.effects; 
         for(let e = 0; e < effects.length; e++) {
             let effect = effects[e]; 
+            console.log('Effect render'); 
             graphics.drawCircle(effect.xPos, effect.yPos, effect.radius); 
         }
     }

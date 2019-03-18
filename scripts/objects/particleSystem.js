@@ -126,8 +126,9 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         
 
         function update(elapsedTime) {
-            //radius += rate * elapsedTime / 1000; 
-            //timeAlive += elapsedTime; 
+            radius += rate * elapsedTime / 1000; 
+            console.log(radius); 
+            timeAlive += elapsedTime; 
         }
 
         function isDead() {
@@ -164,7 +165,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
     function createShipExplosion(xPos, yPos) {
         effects.push(makeEffect({
             radius: 10,
-            rate: 1 / 15,
+            rate: 10,
             lifeTime: 5,
             xPos: xPos,
             yPos: yPos
@@ -183,8 +184,9 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
     }
 
     function update(elapsedTime) {
-        if(effects[0] && effects[0].isDead) {
+        if(effects[0] && effects[0].isDead()) {
             effects.shift(); 
+            console.log('Removing effect'); 
         }
         for(let e = 0; e < effects.length; e++) {
             effects[e].update(elapsedTime); 
