@@ -1,4 +1,4 @@
-MyGame.screens['high-scores'] = (function(game) {
+Game.screens['high-scores'] = (function(game) {
     'use strict';
     
     function initialize() {
@@ -16,4 +16,4 @@ MyGame.screens['high-scores'] = (function(game) {
         initialize : initialize,
         run : run
     };
-}(MyGame.game));
+}(Game.game));

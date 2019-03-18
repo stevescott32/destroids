@@ -1,4 +1,4 @@
-MyGame.screens['main-menu'] = (function(game) {
+Game.screens['main-menu'] = (function(game) {
     'use strict';
 
     function initialize() {
@@ -30,4 +30,4 @@ MyGame.screens['main-menu'] = (function(game) {
         initialize : initialize,
         run : run
     };
-}(MyGame.game));
+}(Game.game));

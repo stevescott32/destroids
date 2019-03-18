@@ -5,7 +5,7 @@
 //
 // ------------------------------------------------------------------
 
-MyGame.game = (function(screens) {
+Game.game = (function(screens) {
     'use strict';
 
     //------------------------------------------------------------------
@@ -52,4 +52,4 @@ MyGame.game = (function(screens) {
         initialize : initialize,
         showScreen : showScreen
     };
-}(MyGame.screens));
+}(Game.screens));

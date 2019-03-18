@@ -165,9 +165,7 @@ label {
     display: block;
     width: 500px;
     height: 500px;
-    border-style: solid;
-    border-width: 1px;
-    background-color: rgb(239,239,251);
+    background-color: var(--main-dark); 
     font-size: 40px;
 }
 
@@ -204,8 +202,8 @@ ul.menu li button {
     color: #CECEF6;
     width: 10em;
     height: 1.5em;
-    background: #0404B4;
-    border: 0.1em solid rgb(255, 0, 0);
+    background: var(--main-blue-color);
+    border: 0.1em solid var(--main-dark);
     border-radius: 0.5em;
     box-shadow: 0.2em 0.2em 0.3em rgb(0, 0, 0);
 }

@@ -1,4 +1,4 @@
-MyGame.screens['help'] = (function(game) {
+Game.screens['help'] = (function(game) {
     'use strict';
     
     function initialize() {
@@ -16,4 +16,4 @@ MyGame.screens['help'] = (function(game) {
         initialize : initialize,
         run : run
     };
-}(MyGame.game));
+}(Game.game));
