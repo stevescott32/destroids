@@ -7,43 +7,92 @@
   <link rel="stylesheet" type="text/css" href="resources/styles/style.css" />
 </head>
 
-<body>
-   <script>
+<body onload="MyGame.game.initialize();">
+  <script>
     let Game = {
       objects: {},
       render: {},
       input: {}
     };
+    let MyGame = {
+      screens: {},
+      input: {},
+      objects: {},
+      render: []
+    }; 
   </script>
-  <div class="leftPane">
-    <h3>High Scores:</h3>
-    <div id='highScoresList'>
-      <p>Initializing...</p>
+  <div id="game">
+    <div id="main-menu" class="screen">
+      <ul class="menu">
+        <li><button id="id-new-game">New&nbsp;Game</button></li>
+        <li><button id="id-high-scores">High&nbsp;Scores</button></li>
+        <li><button id="id-help">Help</button></li>
+        <li><button id="id-about">About</button></li>
+      </ul>
     </div>
-    <button id="clear-high-scores-button" class="basicButton greenButton smallButton"
-      onclick="Game.clearHighScores()">
-      Clear Scores
-    </button>
-    <div id="notify-of-high-score"></div>
-  </div>
-  <div class="centerPane">
-    <canvas id="id-canvas" width="1000" height="1000" style="width: 100%; height: 100%"></canvas>
-  </div>
-  <div id="right" class="rightPane">
-    <div>
-      <h3>Current Game:</h3>
-      <div id="current-game-stats"></div>
+    <div id="high-scores" class="screen">
+      <h1>High Scores</h1>
+      <ol>
+        <li>10000</li>
+        <li>9000</li>
+        <li>8000</li>
+        <li>7000</li>
+      </ol>
+      <ul class="menu">
+        <li><button id="id-high-scores-back">Back</button></li>
+      </ul>
     </div>
-    <div id="id-lives-left"></div>
-    <button id="developer-credits-button" class="basicButton greenButton smallButton" onclick="Game.developerCredits()">
-      Dev Credits
-    </button>
-    <h3>New Game:</h3>
-   <div style="display: block;">
-    <button id="restart-button" class="basicButton greenButton smallButton" onclick="Game.restartGame()">
-      <span>New Game</span>
-    </button>
-  </div>
+    <div id="help" class="screen">
+      <h1>Help</h1>
+      <p>This is some help on how to play the game</p>
+      <ul class="menu">
+        <li><button id="id-help-back">Back</button></li>
+      </ul>
+    </div>
+    <div id="about" class="screen">
+      <h1>About</h1>
+      <p>Developed by</p>
+      <p>Steven Scott</p>
+      <ul class="menu">
+        <li><button id="id-about-back">Back</button></li>
+      </ul>
+    </div>
+
+
+
+    <div id="game-play" class="screen">
+      <div class="leftPane">
+        <h3>High Scores:</h3>
+        <div id='highScoresList'>
+          <p>Initializing...</p>
+        </div>
+        <button id="clear-high-scores-button" class="basicButton greenButton smallButton"
+          onclick="Game.clearHighScores()">
+          Clear Scores
+        </button>
+        <div id="notify-of-high-score"></div>
+      </div>
+      <div class="centerPane">
+        <canvas id="id-canvas" width="1000" height="1000" style="width: 100%; height: 100%"></canvas>
+      </div>
+      <div id="right" class="rightPane">
+        <div>
+          <h3>Current Game:</h3>
+          <div id="current-game-stats"></div>
+        </div>
+        <div id="id-lives-left"></div>
+        <button id="developer-credits-button" class="basicButton greenButton smallButton"
+          onclick="Game.developerCredits()">
+          Dev Credits
+        </button>
+        <h3>New Game:</h3>
+        <div style="display: block;">
+          <button id="restart-button" class="basicButton greenButton smallButton" onclick="Game.restartGame()">
+            <span>New Game</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <script src="scripts/render/core.js"></script>
   <script src="scripts/render/particleSystem.js"></script>
@@ -56,6 +105,12 @@
   <script src="scripts/objects/spaceShip.js"></script>
   <script src="scripts/objects/asteroidManager.js"></script>
   <script src="scripts/objects/lifeManager.js"></script>
+
+  <script src="scripts/game.js"></script>
+  <script src="scripts/screens/about.js"></script>
+  <script src="scripts/screens/help.js"></script>
+  <script src="scripts/screens/highscores.js"></script>
+  <script src="scripts/screens/mainMenu.js"></script>
 
   <script src="scripts/inputKeyboard.js"></script>
   <script src="scripts/highScores.js"></script>

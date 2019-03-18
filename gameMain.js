@@ -1,4 +1,4 @@
-Game = (function (objects, renderer, graphics, input, highScoreManager) {
+MyGame.screens['game-play'] = (function (objects, renderer, graphics, input, highScoreManager) {
     console.log('Starting game main');
 
     let inputBuffer = {};
@@ -6,7 +6,6 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     // time
     let lastTimeStamp = performance.now();
     let elapsedTime = 0; 
-    let startTime = performance.now();
     let quit = false;
 
     // current state
@@ -117,6 +116,10 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
         startGame(); 
     }
 
+    function run() {
+        console.log('Running gameMain'); 
+    }
+
     // ********************************************
     // ***************** Update *******************
     // ********************************************
@@ -174,7 +177,6 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
 
         requestAnimationFrame(gameLoop);
     }
-    initialize();
 
     // ********************************************
     // *************** Buttons ********************
@@ -201,7 +203,9 @@ Game = (function (objects, renderer, graphics, input, highScoreManager) {
     return {
         developerCredits: developerCredits,
         clearHighScores: clearHighScores,
-        restartGame: restartGame
+        restartGame: restartGame,
+        run: run,
+        initialize: initialize
     };
 
 }(Game.objects, Game.render, Game.graphics, Game.input, Game.highScores)); 
