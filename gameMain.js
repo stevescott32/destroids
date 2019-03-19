@@ -90,6 +90,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     // start a new game, resetting all objects
     function startGame() {
         quit = false;
+        cancelNextRequest = false; 
         score = 0;
         inputBuffer = {};
         lifeManager.startGame(); 
