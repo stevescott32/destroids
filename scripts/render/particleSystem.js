@@ -108,16 +108,48 @@ Game.render.ParticleSystemManager = (function (graphics) {
 Game.render.ParticleSystemManager = (function(graphics) {
     'use strict';
 
+    function renderSingleEffect(effect) {
+        function render() {
+            if (effect.isReady) {
+                //Object.getOwnPropertyNames(system.particles).forEach(function (value) {
+                 //   let particle = system.particles[value];
+                //for(let p = 0; p < effect.particles.length; p++) {
+                 //   let particle = effect.particles[p]; 
+                Object.getOwnPropertyNames(effect.particles).forEach(function (value) {
+                    let particle = effect.particles[value];
+                    graphics.drawTexture(effect.image, particle.center, particle.rotation, particle.size);
+                    //console.log('Should have just rendered a particle'); 
+                });
+            }
+        }
+
+        let api = {
+            render: render
+        };
+
+        return api;
+    }
+
+    function realRender(particleSystemManager) {
+        let effects = particleSystemManager.realEffects; 
+        for(let e = 0; e < effects.length; e++) {
+            let effect = effects[e]; 
+            //console.log('Effect real render'); 
+            renderSingleEffect(effect).render(); 
+        }
+    }
+
     function render(particleSystemManager) {
         let effects = particleSystemManager.effects; 
         for(let e = 0; e < effects.length; e++) {
             let effect = effects[e]; 
-            console.log('Effect render'); 
+            //console.log('Effect render'); 
             graphics.drawCircle(effect.xPos, effect.yPos, effect.radius); 
         }
     }
 
     return {
-        render: render
+        render: render,
+        realRender: realRender
     };
 }(Game.graphics))

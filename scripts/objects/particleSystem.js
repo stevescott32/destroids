@@ -113,42 +113,108 @@
 */
 
 Game.objects.ParticleSystemManager = function (managerSpec) {
-    let effects = []; 
+    let effects = [];
+    let realEffects = []; 
 
-    function makeEffect(effectSpec) {
-        console.log('Making effect'); 
-        let radius = effectSpec.radius; 
-        let rate = effectSpec.rate; 
-        let lifeTime = effectSpec.lifeTime * 1000;  
-        let timeAlive = 0; // miliseconds 
-        let xPos = effectSpec.xPos; 
-        let yPos = effectSpec.yPos; 
+    function makeRealEffect(spec) {
+        let nextName = 1;
+        let particles = {};
         
+        let image = new Image();
+        let isReady = false;
 
-        function update(elapsedTime) {
-            radius += rate * elapsedTime / 1000; 
-            console.log(radius); 
-            timeAlive += elapsedTime; 
+        image.onload = () => {
+            isReady = true;
+        };
+        image.src = spec.imageSrc;
+
+        function create() {
+            let size = Random.nextGaussian(spec.size.mean, spec.size.stdev);
+            let p = {
+                center: { x: spec.center.x, y: spec.center.y },
+                size: { height: size, width: size },
+                direction: Random.nextCircleVector(),
+                speed: Random.nextGaussian(spec.speed.mean, spec.speed.stdev), // pixels per second
+                rotation: 0,
+                lifetime: Random.nextGaussian(spec.lifetime.mean, spec.lifetime.stdev), // seconds
+                alive: 0
+            };
+
+            return p;
         }
 
-        function isDead() {
-            if(timeAlive > lifeTime) {
-                console.log('Effect is dead!'); 
-                return true; 
-            } else {
-                return false; 
+        function update(elapsedTime) {
+            let removeMe = [];
+
+            elapsedTime = elapsedTime / 1000;
+
+            for (let particle = 0; particle < 2; particle++) {
+                particles[nextName++] = create();
+            }
+
+            Object.getOwnPropertyNames(particles).forEach(value => {
+                let particle = particles[value];
+
+                particle.alive += elapsedTime;
+                particle.center.x += (elapsedTime * particle.speed * particle.direction.x);
+                particle.center.y += (elapsedTime * particle.speed * particle.direction.y);
+
+                particle.rotation += particle.speed / 500;
+
+                if (particle.alive > particle.lifetime) {
+                    removeMe.push(value);
+                }
+            });
+
+            for (let particle = 0; particle < removeMe.length; particle++) {
+                delete particles[removeMe[particle]];
             }
         }
 
         let api = {
-            get radius() { return radius; }, 
+            update: update,
+            get image() { return image; },
+            get particles() { return particles; },
+            get isReady() { return isReady; }
+        };
+
+        return api;
+    }
+
+    function makeEffect(effectSpec) {
+        console.log('Making effect');
+        let radius = effectSpec.radius;
+        let rate = effectSpec.rate;
+        let lifeTime = effectSpec.lifeTime * 1000;
+        let timeAlive = 0; // miliseconds 
+        let xPos = effectSpec.xPos;
+        let yPos = effectSpec.yPos;
+
+
+        function update(elapsedTime) {
+            radius += rate * elapsedTime / 1000;
+            //console.log(radius);
+            timeAlive += elapsedTime;
+        }
+
+        function isDead() {
+            if (timeAlive > lifeTime) {
+                console.log('Effect is dead!');
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        let api = {
+            get radius() { return radius; },
             get xPos() { return xPos; },
-            get yPos() { return yPos; }, 
+            get yPos() { return yPos; },
             isDead: isDead,
             update: update
         }
 
-        return api; 
+        return api;
     }
 
     function createAsteroidBreakup(xPos, yPos) {
@@ -158,7 +224,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifeTime: 5,
             xPos: xPos,
             yPos: yPos
-        })); 
+        }));
 
     }
 
@@ -169,6 +235,14 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifeTime: 5,
             xPos: xPos,
             yPos: yPos
+        }));
+
+        realEffects.push(makeRealEffect({
+            center: { x: xPos, y: yPos },
+            size: { mean: 100, stdev: 20 }, 
+            speed: { mean: 100, stdev: 20 }, 
+            lifetime: { mean: 100, stdev: 20 }, 
+            imageSrc: "resources/images/laser.png"
         })); 
     }
 
@@ -179,19 +253,21 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifeTime: 5,
             xPos: xPos,
             yPos: yPos
-        })); 
+        }));
 
     }
 
     function update(elapsedTime) {
-        if(effects[0] && effects[0].isDead()) {
-            effects.shift(); 
-            console.log('Removing effect'); 
+        if (effects[0] && effects[0].isDead()) {
+            effects.shift();
+            console.log('Removing effect');
         }
-        for(let e = 0; e < effects.length; e++) {
-            effects[e].update(elapsedTime); 
+        for (let e = 0; e < effects.length; e++) {
+            effects[e].update(elapsedTime);
         }
-
+        for (let e = 0; e < realEffects.length; e++) {
+            realEffects[e].update(elapsedTime);
+        }
     }
 
     let api = {
@@ -199,7 +275,8 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createAsteroidBreakup: createAsteroidBreakup,
         createUFOExplosion: createUFOExplosion,
         update: update,
-        get effects() { return effects; } 
+        get effects() { return effects; },
+        get realEffects() { return realEffects; }
     }
 
     return api;

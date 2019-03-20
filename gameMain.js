@@ -177,6 +177,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         }
         //let effects = particleSystemManager.effects; 
         renderer.ParticleSystemManager.render(particleSystemManager);
+        renderer.ParticleSystemManager.realRender(particleSystemManager); 
 
         highScoreManager.render(); 
     }
