@@ -1,122 +1,8 @@
-/*Game.objects.ParticleSystemManager = function (managerSpec) {
+Game.objects.ParticleSystemManager = function (managerSpec) {
+    let fakeEffects = [];
     let effects = []; 
 
-    function makeParticleEffect(spec) {
-        let nextName = 1;
-        let particles = {};
-
-        function maker(spec) {
-            let size = Random.nextGaussian(spec.size.mean, spec.size.stdev);
-            let particleSystem = {
-                center: { x: spec.center.x, y: spec.center.y },
-                size: { x: size, y: size },
-                direction: Random.nextCircleVector(),
-                speed: Random.nextGaussian(spec.speed.mean, spec.speed.stdev), // pixels per second
-                rotation: 0,
-                lifetime: Random.nextGaussian(spec.lifetime.mean, spec.lifetime.stdev), // seconds
-                alive: 0,
-                imageSrc: spec.imageSrc
-            };
-
-            return particleSystem;
-        }
-
-        maker(spec); 
-
-        function update(elapsedTime) {
-            let removeMe = [];
-
-            elapsedTime = elapsedTime / 1000;
-
-            for (let particle = 0; particle < 2; particle++) {
-                particles[nextName++] = create();
-            }
-
-            Object.getOwnPropertyNames(particles).forEach(value => {
-                let particle = particles[value];
-
-                particle.alive += elapsedTime;
-                particle.center.x += (elapsedTime * particle.speed * particle.direction.x);
-                particle.center.y += (elapsedTime * particle.speed * particle.direction.y);
-
-                particle.rotation += particle.speed / 500;
-
-                if (particle.alive > particle.lifetime) {
-                    removeMe.push(value);
-                }
-            });
-
-            for (let particle = 0; particle < removeMe.length; particle++) {
-                delete particles[removeMe[particle]];
-            }
-        }
-
-        let api = {
-            update: update,
-            get particles() { return particles; },
-        };
-
-        return api;
-    }
-
-    function createShipExplosion(xPos, yPos) {
-        console.log('Creating ship explosion at ' + xPos + ': ' + yPos); 
-        effects.push(makeParticleEffect({
-            center: { x: xPos, y: yPos },
-            size: { mean: 12, stdev: 3 },
-            speed: { mean: 65, stdev: 35 },
-            lifetime: { mean: 4, stdev: 1},
-            imageSrc: "resources/textures/fire.png" 
-        }));
-    }
-
-    function createAsteroidBreakup() {
-    console.log('Creating asteroid explosion at ' + xPos + ': ' + yPos); 
-        effects.push(makeParticleEffect({
-            center: { x: xPos, y: yPos },
-            size: { mean: 12, stdev: 3 },
-            speed: { mean: 65, stdev: 35 },
-            lifetime: { mean: 4, stdev: 1},
-            imageSrc: "resources/textures/smoke.png" 
-        }));
-
-    }
-
-    function createUFOExplosion() {
-    console.log('Creating UFO explosion at ' + xPos + ': ' + yPos); 
-        effects.push(makeParticleEffect({
-            center: { x: xPos, y: yPos },
-            size: { mean: 12, stdev: 3 },
-            speed: { mean: 65, stdev: 35 },
-            lifetime: { mean: 4, stdev: 1},
-            imageSrc: "resources/textures/fire.png" 
-        }));
-
-    }
-
-    function update(elapsedTime) {
-        for(let e = 0; e < effects.length; e++) {
-            effects[e].update(elapsedTime); 
-        }
-    }
-    let api = {
-        createShipExplosion: createShipExplosion,
-        createAsteroidBreakup: createAsteroidBreakup,
-        createUFOExplosion: createUFOExplosion,
-        update: update,
-        get effects() { return effects; } 
-    }
-
-    return api; 
-};
-
-*/
-
-Game.objects.ParticleSystemManager = function (managerSpec) {
-    let effects = [];
-    let realEffects = []; 
-
-    function makeRealEffect(spec) {
+    function makeEffect(spec) {
         let nextName = 1;
         let particles = {};
         
@@ -191,8 +77,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         return api;
     }
 
-    function makeEffect(effectSpec) {
-        console.log('Making effect');
+    function makeFakeEffect(effectSpec) {
         let radius = effectSpec.radius;
         let rate = effectSpec.rate;
         let lifeTime = effectSpec.lifeTime * 1000;
@@ -228,7 +113,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
     }
 
     function createAsteroidBreakup(xPos, yPos) {
-        effects.push(makeEffect({
+        effects.push(makeFakeEffect({
             radius: 10,
             rate: 1 / 15,
             lifeTime: 5,
@@ -239,7 +124,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
     }
 
     function createShipExplosion(xPos, yPos) {
-        effects.push(makeEffect({
+        fakeEffects.push(makeFakeEffect({
             radius: 10,
             rate: 10,
             lifeTime: 5,
@@ -247,7 +132,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             yPos: yPos
         }));
 
-        realEffects.push(makeRealEffect({
+        effects.push(makeEffect({
             center: { x: xPos, y: yPos },
             size: { mean: 20, stdev: 4 }, 
             speed: { mean: 100, stdev: 20 }, 
@@ -258,7 +143,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
     }
 
     function createUFOExplosion(xPos, yPos) {
-        effects.push(makeEffect({
+        effects.push(makeFakeEffect({
             radius: 10,
             rate: 1 / 25,
             lifeTime: 5,
@@ -271,17 +156,15 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
     function update(elapsedTime) {
         if (effects[0] && effects[0].isDead()) {
             effects.shift();
-            console.log('Removing effect');
         }
-        if (realEffects[0] && realEffects[0].isDead()) {
-            realEffects.shift();
-            console.log('Removing real effect');
+        if (fakeEffects[0] && fakeEffects[0].isDead()) {
+            fakeEffects.shift();
         }
         for (let e = 0; e < effects.length; e++) {
             effects[e].update(elapsedTime);
         }
-        for (let e = 0; e < realEffects.length; e++) {
-            realEffects[e].update(elapsedTime);
+        for (let e = 0; e < fakeEffects.length; e++) {
+            fakeEffects[e].update(elapsedTime);
         }
     }
 
@@ -291,7 +174,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createUFOExplosion: createUFOExplosion,
         update: update,
         get effects() { return effects; },
-        get realEffects() { return realEffects; }
+        get fakeEffects() { return fakeEffects; }
     }
 
     return api;

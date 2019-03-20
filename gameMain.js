@@ -175,9 +175,8 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         if(!quit) {
             renderer.SpaceShip.render(spaceShip); 
         }
-        //let effects = particleSystemManager.effects; 
         renderer.ParticleSystemManager.render(particleSystemManager);
-        renderer.ParticleSystemManager.realRender(particleSystemManager); 
+        //renderer.ParticleSystemManager.realRender(particleSystemManager); 
 
         highScoreManager.render(); 
     }
