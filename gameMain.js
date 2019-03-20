@@ -120,7 +120,6 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
         gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
         gameKeyboard.register(' ', playerShoot);
-        gameKeyboard.register('n', restartGame); 
         gameKeyboard.register('z', hyperspace); 
         gameKeyboard.register('Z', hyperspace); 
         gameKeyboard.register('Escape', escape); 
@@ -144,7 +143,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         spaceShipLasers.update(elapsedTime);
         if(!quit) {
             spaceShip.update(elapsedTime);
-            asteroidManager.detectLaserCollisions(spaceShipLasers);
+            asteroidManager.detectLaserCollisions(spaceShipLasers, particleSystemManager);
         }
         particleSystemManager.update(elapsedTime); 
         score = asteroidManager.asteroidScore; 
@@ -176,8 +175,6 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
             renderer.SpaceShip.render(spaceShip); 
         }
         renderer.ParticleSystemManager.render(particleSystemManager);
-        //renderer.ParticleSystemManager.realRender(particleSystemManager); 
-
         highScoreManager.render(); 
     }
 

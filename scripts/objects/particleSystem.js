@@ -1,5 +1,4 @@
 Game.objects.ParticleSystemManager = function (managerSpec) {
-    let fakeEffects = [];
     let effects = []; 
 
     function makeEffect(spec) {
@@ -43,7 +42,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             elapsedTime = elapsedTime / 1000;
             systemTotalTime += elapsedTime; 
 
-            for (let particle = 0; particle < 10; particle++) {
+            for (let particle = 0; particle < spec.density; particle++) {
                 particles[nextName++] = create();
             }
 
@@ -77,79 +76,50 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         return api;
     }
 
-    function makeFakeEffect(effectSpec) {
-        let radius = effectSpec.radius;
-        let rate = effectSpec.rate;
-        let lifeTime = effectSpec.lifeTime * 1000;
-        let timeAlive = 0; // miliseconds 
-        let xPos = effectSpec.xPos;
-        let yPos = effectSpec.yPos;
-
-
-        function update(elapsedTime) {
-            radius += rate * elapsedTime / 1000;
-            //console.log(radius);
-            timeAlive += elapsedTime;
-        }
-
-        function isDead() {
-            if (timeAlive > lifeTime) {
-                console.log('Effect is dead!');
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        let api = {
-            get radius() { return radius; },
-            get xPos() { return xPos; },
-            get yPos() { return yPos; },
-            isDead: isDead,
-            update: update
-        }
-
-        return api;
-    }
-
-    function createAsteroidBreakup(xPos, yPos) {
-        effects.push(makeFakeEffect({
-            radius: 10,
-            rate: 1 / 15,
-            lifeTime: 5,
-            xPos: xPos,
-            yPos: yPos
-        }));
-
+    function createAsteroidBreakup(asteroid) {
+        let sc = asteroid.size.sizeCategory; 
+        effects.push(makeEffect({
+            center: { x: asteroid.center.x, y: asteroid.center.y },
+            size: { mean: 10, stdev: 2 }, 
+            speed: { mean: (200 * sc), stdev: 20 }, 
+            lifetime: { mean: (0.4 + sc * 0.1), stdev: 0.2 }, 
+            explosionLifetime: 0.4 + sc * 0.1, 
+            density: sc * sc * 5, 
+            imageSrc: "resources/images/smoke.png"
+        })); 
     }
 
     function createShipExplosion(xPos, yPos) {
-        fakeEffects.push(makeFakeEffect({
-            radius: 10,
-            rate: 10,
-            lifeTime: 5,
-            xPos: xPos,
-            yPos: yPos
-        }));
-
         effects.push(makeEffect({
             center: { x: xPos, y: yPos },
             size: { mean: 20, stdev: 4 }, 
             speed: { mean: 100, stdev: 20 }, 
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
+            density: 10, 
             imageSrc: "resources/images/fire.png"
         })); 
     }
 
     function createUFOExplosion(xPos, yPos) {
-        effects.push(makeFakeEffect({
-            radius: 10,
-            rate: 1 / 25,
-            lifeTime: 5,
-            xPos: xPos,
-            yPos: yPos
-        }));
+        effects.push(makeEffect({
+            center: { x: xPos, y: yPos },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 100, stdev: 20 }, 
+            lifetime: { mean: 1, stdev: 0.5 }, 
+            explosionLifetime: 1, 
+            density: 5, 
+            imageSrc: "resources/images/smoke.png"
+        })); 
+        effects.push(makeEffect({
+            center: { x: xPos, y: yPos },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 100, stdev: 20 }, 
+            lifetime: { mean: 1, stdev: 0.5 }, 
+            explosionLifetime: 1, 
+            density: 8, 
+            imageSrc: "resources/images/fire.png"
+        })); 
 
     }
 
@@ -157,14 +127,8 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         if (effects[0] && effects[0].isDead()) {
             effects.shift();
         }
-        if (fakeEffects[0] && fakeEffects[0].isDead()) {
-            fakeEffects.shift();
-        }
         for (let e = 0; e < effects.length; e++) {
             effects[e].update(elapsedTime);
-        }
-        for (let e = 0; e < fakeEffects.length; e++) {
-            fakeEffects[e].update(elapsedTime);
         }
     }
 
@@ -174,7 +138,6 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createUFOExplosion: createUFOExplosion,
         update: update,
         get effects() { return effects; },
-        get fakeEffects() { return fakeEffects; }
     }
 
     return api;

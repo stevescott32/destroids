@@ -11,8 +11,6 @@ Game.objects.AsteroidManager = function (managerSpec) {
   let accumulatedTime = 0;
   let asteroidScore = 0;
 
-  let asteroidsMade = 0; 
-
   let image = new Image();
   let imageReady = false;
   image.onload = function () {
@@ -111,9 +109,10 @@ Game.objects.AsteroidManager = function (managerSpec) {
     }
   }
 
-  function explode(asteroid) {
+  function explode(asteroid, particleSystemManager) {
     asteroidScore += 1;
     asteroid.remove = true;
+    particleSystemManager.createAsteroidBreakup(asteroid)
     if (asteroid.size.sizeCategory > 1) {
       let numToGenerate = 3 + (3 % asteroid.size.sizeCategory);
       for (let a = 0; a < numToGenerate; a++) {
@@ -124,11 +123,11 @@ Game.objects.AsteroidManager = function (managerSpec) {
   }
 
 
-  function detectLaserCollisions(laserManager) {
+  function detectLaserCollisions(laserManager, particleSystemManager) {
     for (let a = 0; a < asteroids.length; a++) {
       let asteroid = asteroids[a];
       if (!asteroid.remove && laserManager.detectCircleCollision(asteroid.center, asteroid.radius)) {
-        explode(asteroid);
+        explode(asteroid, particleSystemManager);
       }
     }
   }
