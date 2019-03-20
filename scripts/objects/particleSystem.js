@@ -122,6 +122,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         
         let image = new Image();
         let isReady = false;
+        let systemTotalTime = 0; 
 
         image.onload = () => {
             isReady = true;
@@ -143,12 +144,20 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             return p;
         }
 
+        function isDead() {
+            if(systemTotalTime > spec.explosionLifetime) {
+                return true;
+            }
+            return false; 
+        }
+
         function update(elapsedTime) {
             let removeMe = [];
 
             elapsedTime = elapsedTime / 1000;
+            systemTotalTime += elapsedTime; 
 
-            for (let particle = 0; particle < 2; particle++) {
+            for (let particle = 0; particle < 10; particle++) {
                 particles[nextName++] = create();
             }
 
@@ -175,7 +184,8 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             update: update,
             get image() { return image; },
             get particles() { return particles; },
-            get isReady() { return isReady; }
+            get isReady() { return isReady; },
+            isDead: isDead
         };
 
         return api;
@@ -239,10 +249,11 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
 
         realEffects.push(makeRealEffect({
             center: { x: xPos, y: yPos },
-            size: { mean: 100, stdev: 20 }, 
+            size: { mean: 20, stdev: 4 }, 
             speed: { mean: 100, stdev: 20 }, 
-            lifetime: { mean: 100, stdev: 20 }, 
-            imageSrc: "resources/images/laser.png"
+            lifetime: { mean: 1, stdev: 0.5 }, 
+            explosionLifetime: 1, 
+            imageSrc: "resources/images/fire.png"
         })); 
     }
 
@@ -261,6 +272,10 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         if (effects[0] && effects[0].isDead()) {
             effects.shift();
             console.log('Removing effect');
+        }
+        if (realEffects[0] && realEffects[0].isDead()) {
+            realEffects.shift();
+            console.log('Removing real effect');
         }
         for (let e = 0; e < effects.length; e++) {
             effects[e].update(elapsedTime);

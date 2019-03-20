@@ -110,15 +110,10 @@ Game.render.ParticleSystemManager = (function(graphics) {
 
     function renderSingleEffect(effect) {
         function render() {
-            if (effect.isReady) {
-                //Object.getOwnPropertyNames(system.particles).forEach(function (value) {
-                 //   let particle = system.particles[value];
-                //for(let p = 0; p < effect.particles.length; p++) {
-                 //   let particle = effect.particles[p]; 
+            if (effect.isReady && !effect.isDead()) {
                 Object.getOwnPropertyNames(effect.particles).forEach(function (value) {
                     let particle = effect.particles[value];
                     graphics.drawTexture(effect.image, particle.center, particle.rotation, particle.size);
-                    //console.log('Should have just rendered a particle'); 
                 });
             }
         }
