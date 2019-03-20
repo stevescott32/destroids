@@ -74,6 +74,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     function hyperspace() {
         spaceShip.playerHyperspace(asteroidManager.asteroids);  
+        particleSystemManager.createHyperspaceEffect(spaceShip); 
     }
 
     function escape() {
@@ -160,6 +161,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
                 spaceShip.crashed = false; 
                 spaceShip.startGame(); 
                 spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
+                particleSystemManager.createNewLifeEffect(spaceShip); 
             }
         }
     }

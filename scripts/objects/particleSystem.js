@@ -76,6 +76,30 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         return api;
     }
 
+    function createHyperspaceEffect(spaceship) {
+        effects.push(makeEffect({
+            center: { x: spaceship.center.x, y: spaceship.center.y },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 400, stdev: 20 }, 
+            lifetime: { mean: 0.2, stdev: 0.1 }, 
+            explosionLifetime: 0.2, 
+            density: 8, 
+            imageSrc: "resources/images/laser.png"
+        })); 
+    }
+
+    function createNewLifeEffect(spaceship) {
+        effects.push(makeEffect({
+            center: { x: spaceship.center.x, y: spaceship.center.y },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 400, stdev: 20 }, 
+            lifetime: { mean: 0.5, stdev: 0.1 }, 
+            explosionLifetime: 0.5, 
+            density: 8, 
+            imageSrc: "resources/images/spaceship-main.png"
+        })); 
+    }
+
     function createAsteroidBreakup(asteroid) {
         let sc = asteroid.size.sizeCategory; 
         effects.push(makeEffect({
@@ -136,6 +160,8 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createShipExplosion: createShipExplosion,
         createAsteroidBreakup: createAsteroidBreakup,
         createUFOExplosion: createUFOExplosion,
+        createHyperspaceEffect: createHyperspaceEffect,
+        createNewLifeEffect: createNewLifeEffect,
         update: update,
         get effects() { return effects; },
     }
