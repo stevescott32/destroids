@@ -8,6 +8,8 @@ Game.objects.AlienShipManager = function (spec) {
         let imageReady = false;
         let image = new Image();
 
+        let lastShot = 0; 
+
         image.onload = function () {
             imageReady = true;
         };
@@ -16,6 +18,7 @@ Game.objects.AlienShipManager = function (spec) {
         // determine where the ship is and return a spec with 
         // the current point in the direction of the ship 
         function shoot() {
+            console.log('Shooting a new alien laser'); 
             let laserCenter = {
                 x: shipSpec.center.x,
                 y: shipSpec.center.y
@@ -24,7 +27,7 @@ Game.objects.AlienShipManager = function (spec) {
                 width: 25,
                 height: 15
             };
-            let laserRotation = rotation;
+            let laserRotation = shipSpec.rotation; 
             let laserSpec = {
                 center: laserCenter,
                 size: laserSize,
@@ -49,6 +52,12 @@ Game.objects.AlienShipManager = function (spec) {
             }
             else if (shipSpec.center.y > 2 * shipSpec.canvasHeight) {
                 shipSpec.center.y = 0;
+            }
+
+            // shoot a laser
+            if(performance.now() - lastShot > shipSpec.fireRate * 1000) {
+                spec.lasers.addLaser(shoot()); 
+                lastShot = performance.now(); 
             }
         }
 
@@ -78,37 +87,38 @@ Game.objects.AlienShipManager = function (spec) {
 
     function startGame() {
         ships = []; 
-        let firstShipRotation = Random.nextGaussian(2 * Math.PI, (Math.PI)); 
+        let firstShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
             imageSrc: 'resources/images/smallAlien.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 80, height: 80 },
-            xSpeed: Random.nextGaussian(15, 15) * Math.cos(firstShipRotation),
-            ySpeed: Random.nextGaussian(15, 15) * Math.sin(firstShipRotation), 
+            xSpeed: Random.nextGaussian(-15, 3) * Math.cos(firstShipRotation),
+            ySpeed: Random.nextGaussian(15, 3) * Math.sin(firstShipRotation), 
             radius: 35,
             canvasHeight: spec.canvasHeight,
             canvasWidth: spec.canvasWidth,
-            rotationRate: 0 * Math.PI / 16, // radians per second
+            rotationRate: 1 * Math.PI / 16, // radians per second
             rotation:firstShipRotation, 
             crashed: false,
-            lifetime: 10 // seconds
+            fireRate: 1 // seconds
         })); 
-        let secondShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
+        
+        let secondShipRotation = Random.nextGaussian(-Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
             imageSrc: 'resources/images/largeAlien.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 50, height: 50 },
             xSpeed: Random.nextGaussian(20, 3) * Math.cos(firstShipRotation),
-            ySpeed: Random.nextGaussian(20, 3) * Math.sin(firstShipRotation), 
+            ySpeed: Random.nextGaussian(-20, 3) * Math.sin(firstShipRotation), 
             radius: 20,
             canvasHeight: spec.canvasHeight,
             canvasWidth: spec.canvasWidth,
-            rotationRate: 0 * Math.PI / 16, // radians per second
+            rotationRate: 1 * Math.PI / 16, // radians per second
             rotation:secondShipRotation, 
             crashed: false,
-            lifetime: 10 // seconds
+            fireRate: 2 // seconds
         })); 
 
     }

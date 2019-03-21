@@ -65,6 +65,7 @@ Game.objects.LaserManager = function (managerSpec) {
   function update(elapsedTime) {
     if(lasers[0] && lasers[0].isDead) {
       lasers.shift(); 
+      console.log('Removing a laser'); 
     }
     for (let l = 0; l < lasers.length; l++) {
       let laser = lasers[l];

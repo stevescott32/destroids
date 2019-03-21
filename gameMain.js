@@ -39,7 +39,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     });
 
     let alienLasers = objects.LaserManager({
-        imageSrc: 'resources/images/laser.png',
+        imageSrc: 'resources/images/purpleBlob.png',
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         interval: 500 // milliseconds
@@ -152,6 +152,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         gameKeyboard.update(elapsedTime);
         asteroidManager.update(elapsedTime);
         spaceShipLasers.update(elapsedTime);
+        alienLasers.update(elapsedTime);
         alienShipManager.update(elapsedTime); 
         if(!quit) {
             spaceShip.update(elapsedTime);
@@ -190,6 +191,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         }
         renderer.ParticleSystemManager.render(particleSystemManager);
         highScoreManager.render(); 
+        renderer.Laser.render(alienLasers);
     }
 
 
