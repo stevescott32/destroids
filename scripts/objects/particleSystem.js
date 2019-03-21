@@ -84,7 +84,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 0.2, stdev: 0.1 }, 
             explosionLifetime: 0.2, 
             density: 8, 
-            imageSrc: "resources/images/laser.png"
+            imageSrc: "resources/images/greenBlob.png"
         })); 
     }
 
@@ -93,10 +93,10 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             center: { x: spaceship.center.x, y: spaceship.center.y },
             size: { mean: 20, stdev: 4 }, 
             speed: { mean: 400, stdev: 20 }, 
-            lifetime: { mean: 0.5, stdev: 0.1 }, 
-            explosionLifetime: 0.5, 
+            lifetime: { mean: 0.3, stdev: 0.1 }, 
+            explosionLifetime: 0.3, 
             density: 8, 
-            imageSrc: "resources/images/spaceship-main.png"
+            imageSrc: "resources/images/greenBlob.png"
         })); 
     }
 

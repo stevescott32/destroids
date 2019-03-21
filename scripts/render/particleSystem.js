@@ -22,22 +22,11 @@ Game.render.ParticleSystemManager = (function(graphics) {
         let effects = particleSystemManager.effects; 
         for(let e = 0; e < effects.length; e++) {
             let effect = effects[e]; 
-            //console.log('Effect real render'); 
             renderSingleEffect(effect).render(); 
         }
     }
 
-    function fakeRender(particleSystemManager) {
-        let effects = particleSystemManager.fakeEffects; 
-        for(let e = 0; e < effects.length; e++) {
-            let effect = effects[e]; 
-            //console.log('Effect render'); 
-            graphics.drawCircle(effect.xPos, effect.yPos, effect.radius); 
-        }
-    }
-
     return {
-        render: render,
-        fakeRender: fakeRender
+        render: render
     };
 }(Game.graphics))
