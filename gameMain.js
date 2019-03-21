@@ -1,6 +1,4 @@
 Game.screens['game-play'] = (function (game, objects, renderer, graphics, input, highScoreManager) {
-    console.log('Starting game main');
-
     let inputBuffer = {};
 
     // time
@@ -40,6 +38,19 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         interval: 200 // milliseconds
     });
 
+    let alienLasers = objects.LaserManager({
+        imageSrc: 'resources/images/laser.png',
+        maxX: graphics.canvas.height,
+        maxY: graphics.canvas.width,
+        interval: 500 // milliseconds
+   }); 
+
+   let alienShipManager = objects.AlienShipManager({
+        canvasHeight: graphics.canvas.height,
+        canvasWidth: graphics.canvas.width,
+        lasers: alienLasers
+    });
+
     // manager for all asteroids in the game
     let asteroidManager = objects.AsteroidManager({
         imageSrc: "resources/images/asteroid.png",
@@ -58,9 +69,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         lives: 3
     }); 
 
-    let particleSystemManager = objects.ParticleSystemManager({
-
-    }); 
+    let particleSystemManager = objects.ParticleSystemManager({}); 
 
     // ********************************************
     // *********** Keyboard actions ***************
@@ -83,8 +92,6 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         game.showScreen('main-menu'); 
     }
 
-    
-
     // ********************************************
     // ********** Changing Game State *************
     // ********************************************
@@ -101,6 +108,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         highScoreManager.startGame(); 
         particleSystemManager.startGame(); 
         spaceShipLasers.startGame(); 
+        alienShipManager.startGame(); 
         spaceShip.crashed = false; 
         startTime = performance.now();
         requestAnimationFrame(gameLoop);
@@ -126,12 +134,10 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
         gameKeyboard.register(' ', playerShoot);
         gameKeyboard.register('z', hyperspace); 
-        gameKeyboard.register('Z', hyperspace); 
         gameKeyboard.register('Escape', escape); 
     }
 
     function run() {
-        console.log('Running gameMain'); 
         lastTimeStamp = performance.now(); 
         cancelNextRequest = false; 
         startGame(); 
@@ -146,6 +152,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         gameKeyboard.update(elapsedTime);
         asteroidManager.update(elapsedTime);
         spaceShipLasers.update(elapsedTime);
+        alienShipManager.update(elapsedTime); 
         if(!quit) {
             spaceShip.update(elapsedTime);
             asteroidManager.detectLaserCollisions(spaceShipLasers, particleSystemManager);
@@ -177,6 +184,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
         renderer.Laser.render(spaceShipLasers);
         renderer.Asteroid.render(asteroidManager);
+        renderer.AlienShipManager.render(alienShipManager); 
         if(!quit) {
             renderer.SpaceShip.render(spaceShip); 
         }
