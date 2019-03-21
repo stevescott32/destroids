@@ -57,6 +57,11 @@ Game.objects.LaserManager = function (managerSpec) {
     }
   }
 
+  function startGame() {
+    lasers = []; 
+    lastTimeFired = 0; 
+  }
+
   function update(elapsedTime) {
     if(lasers[0] && lasers[0].isDead) {
       lasers.shift(); 
@@ -76,6 +81,7 @@ Game.objects.LaserManager = function (managerSpec) {
   let api = {
     addLaser: addLaser,
     detectCircleCollision: detectCircleCollision,
+    startGame: startGame,
     update: update,
     get imageReady() { return imageReady; },
     get image() { return image; },

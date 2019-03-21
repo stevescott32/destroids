@@ -147,6 +147,10 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
 
     }
 
+    function startGame() {
+        effects = []; 
+    }
+
     function update(elapsedTime) {
         if (effects[0] && effects[0].isDead()) {
             effects.shift();
@@ -162,6 +166,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createUFOExplosion: createUFOExplosion,
         createHyperspaceEffect: createHyperspaceEffect,
         createNewLifeEffect: createNewLifeEffect,
+        startGame: startGame,
         update: update,
         get effects() { return effects; },
     }

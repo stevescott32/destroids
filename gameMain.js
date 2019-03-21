@@ -98,6 +98,8 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         spaceShip.startGame();
         asteroidManager.startGame(); 
         highScoreManager.startGame(); 
+        particleSystemManager.startGame(); 
+        spaceShipLasers.startGame(); 
         spaceShip.crashed = false; 
         startTime = performance.now();
         requestAnimationFrame(gameLoop);
@@ -109,6 +111,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         cancelNextRequest = true; 
         score = asteroidManager.asteroidScore;  
         highScoreManager.endGame(score); 
+        game.showScreen('main-menu'); 
     }
 
     // set up the game the first time it is loaded
