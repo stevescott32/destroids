@@ -1,34 +1,48 @@
-/*Game.objects.ParticleSystemManager = function (managerSpec) {
+Game.objects.ParticleSystemManager = function (managerSpec) {
     let effects = []; 
 
-    function makeParticleEffect(spec) {
+    function makeEffect(spec) {
         let nextName = 1;
         let particles = {};
+        
+        let image = new Image();
+        let isReady = false;
+        let systemTotalTime = 0; 
 
-        function maker(spec) {
+        image.onload = () => {
+            isReady = true;
+        };
+        image.src = spec.imageSrc;
+
+        function create() {
             let size = Random.nextGaussian(spec.size.mean, spec.size.stdev);
-            let particleSystem = {
+            let p = {
                 center: { x: spec.center.x, y: spec.center.y },
-                size: { x: size, y: size },
+                size: { height: size, width: size },
                 direction: Random.nextCircleVector(),
                 speed: Random.nextGaussian(spec.speed.mean, spec.speed.stdev), // pixels per second
                 rotation: 0,
                 lifetime: Random.nextGaussian(spec.lifetime.mean, spec.lifetime.stdev), // seconds
-                alive: 0,
-                imageSrc: spec.imageSrc
+                alive: 0
             };
 
-            return particleSystem;
+            return p;
         }
 
-        maker(spec); 
+        function isDead() {
+            if(systemTotalTime > spec.explosionLifetime) {
+                return true;
+            }
+            return false; 
+        }
 
         function update(elapsedTime) {
             let removeMe = [];
 
             elapsedTime = elapsedTime / 1000;
+            systemTotalTime += elapsedTime; 
 
-            for (let particle = 0; particle < 2; particle++) {
+            for (let particle = 0; particle < spec.density; particle++) {
                 particles[nextName++] = create();
             }
 
@@ -53,151 +67,103 @@
 
         let api = {
             update: update,
+            get image() { return image; },
             get particles() { return particles; },
+            get isReady() { return isReady; },
+            isDead: isDead
         };
 
         return api;
     }
 
-    function createShipExplosion(xPos, yPos) {
-        console.log('Creating ship explosion at ' + xPos + ': ' + yPos); 
-        effects.push(makeParticleEffect({
-            center: { x: xPos, y: yPos },
-            size: { mean: 12, stdev: 3 },
-            speed: { mean: 65, stdev: 35 },
-            lifetime: { mean: 4, stdev: 1},
-            imageSrc: "resources/textures/fire.png" 
-        }));
-    }
-
-    function createAsteroidBreakup() {
-    console.log('Creating asteroid explosion at ' + xPos + ': ' + yPos); 
-        effects.push(makeParticleEffect({
-            center: { x: xPos, y: yPos },
-            size: { mean: 12, stdev: 3 },
-            speed: { mean: 65, stdev: 35 },
-            lifetime: { mean: 4, stdev: 1},
-            imageSrc: "resources/textures/smoke.png" 
-        }));
-
-    }
-
-    function createUFOExplosion() {
-    console.log('Creating UFO explosion at ' + xPos + ': ' + yPos); 
-        effects.push(makeParticleEffect({
-            center: { x: xPos, y: yPos },
-            size: { mean: 12, stdev: 3 },
-            speed: { mean: 65, stdev: 35 },
-            lifetime: { mean: 4, stdev: 1},
-            imageSrc: "resources/textures/fire.png" 
-        }));
-
-    }
-
-    function update(elapsedTime) {
-        for(let e = 0; e < effects.length; e++) {
-            effects[e].update(elapsedTime); 
-        }
-    }
-    let api = {
-        createShipExplosion: createShipExplosion,
-        createAsteroidBreakup: createAsteroidBreakup,
-        createUFOExplosion: createUFOExplosion,
-        update: update,
-        get effects() { return effects; } 
-    }
-
-    return api; 
-};
-
-*/
-
-Game.objects.ParticleSystemManager = function (managerSpec) {
-    let effects = []; 
-
-    function makeEffect(effectSpec) {
-        console.log('Making effect'); 
-        let radius = effectSpec.radius; 
-        let rate = effectSpec.rate; 
-        let lifeTime = effectSpec.lifeTime * 1000;  
-        let timeAlive = 0; // miliseconds 
-        let xPos = effectSpec.xPos; 
-        let yPos = effectSpec.yPos; 
-        
-
-        function update(elapsedTime) {
-            //radius += rate * elapsedTime / 1000; 
-            //timeAlive += elapsedTime; 
-        }
-
-        function isDead() {
-            if(timeAlive > lifeTime) {
-                console.log('Effect is dead!'); 
-                return true; 
-            } else {
-                return false; 
-            }
-        }
-
-        let api = {
-            get radius() { return radius; }, 
-            get xPos() { return xPos; },
-            get yPos() { return yPos; }, 
-            isDead: isDead,
-            update: update
-        }
-
-        return api; 
-    }
-
-    function createAsteroidBreakup(xPos, yPos) {
+    function createHyperspaceEffect(spaceship) {
         effects.push(makeEffect({
-            radius: 10,
-            rate: 1 / 15,
-            lifeTime: 5,
-            xPos: xPos,
-            yPos: yPos
+            center: { x: spaceship.center.x, y: spaceship.center.y },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 400, stdev: 20 }, 
+            lifetime: { mean: 0.2, stdev: 0.1 }, 
+            explosionLifetime: 0.2, 
+            density: 8, 
+            imageSrc: "resources/images/greenBlob.png"
         })); 
+    }
 
+    function createNewLifeEffect(spaceship) {
+        effects.push(makeEffect({
+            center: { x: spaceship.center.x, y: spaceship.center.y },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 400, stdev: 20 }, 
+            lifetime: { mean: 0.3, stdev: 0.1 }, 
+            explosionLifetime: 0.3, 
+            density: 8, 
+            imageSrc: "resources/images/greenBlob.png"
+        })); 
+    }
+
+    function createAsteroidBreakup(asteroid) {
+        let sc = asteroid.size.sizeCategory; 
+        effects.push(makeEffect({
+            center: { x: asteroid.center.x, y: asteroid.center.y },
+            size: { mean: 10, stdev: 2 }, 
+            speed: { mean: (200 * sc), stdev: 20 }, 
+            lifetime: { mean: (0.4 + sc * 0.1), stdev: 0.2 }, 
+            explosionLifetime: 0.4 + sc * 0.1, 
+            density: sc * sc * 5, 
+            imageSrc: "resources/images/smoke.png"
+        })); 
     }
 
     function createShipExplosion(xPos, yPos) {
         effects.push(makeEffect({
-            radius: 10,
-            rate: 1 / 15,
-            lifeTime: 5,
-            xPos: xPos,
-            yPos: yPos
+            center: { x: xPos, y: yPos },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 100, stdev: 20 }, 
+            lifetime: { mean: 1, stdev: 0.5 }, 
+            explosionLifetime: 1, 
+            density: 10, 
+            imageSrc: "resources/images/fire.png"
         })); 
     }
 
     function createUFOExplosion(xPos, yPos) {
         effects.push(makeEffect({
-            radius: 10,
-            rate: 1 / 25,
-            lifeTime: 5,
-            xPos: xPos,
-            yPos: yPos
+            center: { x: xPos, y: yPos },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 100, stdev: 20 }, 
+            lifetime: { mean: 1, stdev: 0.5 }, 
+            explosionLifetime: 1, 
+            density: 5, 
+            imageSrc: "resources/images/smoke.png"
+        })); 
+        effects.push(makeEffect({
+            center: { x: xPos, y: yPos },
+            size: { mean: 20, stdev: 4 }, 
+            speed: { mean: 100, stdev: 20 }, 
+            lifetime: { mean: 1, stdev: 0.5 }, 
+            explosionLifetime: 1, 
+            density: 8, 
+            imageSrc: "resources/images/fire.png"
         })); 
 
     }
 
     function update(elapsedTime) {
-        if(effects[0] && effects[0].isDead) {
-            effects.shift(); 
+        if (effects[0] && effects[0].isDead()) {
+            effects.shift();
         }
-        for(let e = 0; e < effects.length; e++) {
-            effects[e].update(elapsedTime); 
+        for (let e = 0; e < effects.length; e++) {
+            effects[e].update(elapsedTime);
         }
-
     }
 
     let api = {
         createShipExplosion: createShipExplosion,
         createAsteroidBreakup: createAsteroidBreakup,
         createUFOExplosion: createUFOExplosion,
+        createHyperspaceEffect: createHyperspaceEffect,
+        createNewLifeEffect: createNewLifeEffect,
         update: update,
-        get effects() { return effects; } 
+        get effects() { return effects; },
     }
 
     return api;

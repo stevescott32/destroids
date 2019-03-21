@@ -74,6 +74,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     function hyperspace() {
         spaceShip.playerHyperspace(asteroidManager.asteroids);  
+        particleSystemManager.createHyperspaceEffect(spaceShip); 
     }
 
     function escape() {
@@ -90,6 +91,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     // start a new game, resetting all objects
     function startGame() {
         quit = false;
+        cancelNextRequest = false; 
         score = 0;
         inputBuffer = {};
         lifeManager.startGame(); 
@@ -119,7 +121,6 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
         gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
         gameKeyboard.register(' ', playerShoot);
-        gameKeyboard.register('n', restartGame); 
         gameKeyboard.register('z', hyperspace); 
         gameKeyboard.register('Z', hyperspace); 
         gameKeyboard.register('Escape', escape); 
@@ -143,7 +144,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         spaceShipLasers.update(elapsedTime);
         if(!quit) {
             spaceShip.update(elapsedTime);
-            asteroidManager.detectLaserCollisions(spaceShipLasers);
+            asteroidManager.detectLaserCollisions(spaceShipLasers, particleSystemManager);
         }
         particleSystemManager.update(elapsedTime); 
         score = asteroidManager.asteroidScore; 
@@ -160,6 +161,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
                 spaceShip.crashed = false; 
                 spaceShip.startGame(); 
                 spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
+                particleSystemManager.createNewLifeEffect(spaceShip); 
             }
         }
     }
@@ -174,9 +176,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         if(!quit) {
             renderer.SpaceShip.render(spaceShip); 
         }
-        //let effects = particleSystemManager.effects; 
         renderer.ParticleSystemManager.render(particleSystemManager);
-
         highScoreManager.render(); 
     }
 
