@@ -138,6 +138,8 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     }
 
     function run() {
+        //graphics.canvas.width = window.innerWidth; 
+        //graphics.canvas.height = window.innerHeight; 
         lastTimeStamp = performance.now(); 
         cancelNextRequest = false; 
         startGame(); 

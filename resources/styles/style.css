@@ -20,7 +20,6 @@ body {
 }
 
 canvas {
-  background-color: var(--main-dark);
   border: var(--main-dark-contrast) 6px solid;
   border-radius: 4px; 
 }
@@ -165,7 +164,6 @@ label {
     display: block;
     width: 500px;
     height: 500px;
-    background-color: var(--main-dark); 
     font-size: 40px;
 }
 
@@ -203,7 +201,6 @@ ul.menu li button {
     width: 10em;
     height: 1.5em;
     background: var(--main-blue-color);
-    border: 0.1em solid var(--main-dark);
     border-radius: 0.5em;
     box-shadow: 0.2em 0.2em 0.3em rgb(0, 0, 0);
 }
