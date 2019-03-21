@@ -73,8 +73,9 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     }
 
     function hyperspace() {
-        spaceShip.playerHyperspace(asteroidManager.asteroids);  
-        particleSystemManager.createHyperspaceEffect(spaceShip); 
+        if(spaceShip.playerHyperspace(asteroidManager.asteroids)) {
+            particleSystemManager.createHyperspaceEffect(spaceShip); 
+        }
     }
 
     function escape() {

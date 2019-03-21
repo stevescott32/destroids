@@ -147,6 +147,10 @@ Game.objects.SpaceShip = function (spec) {
         if (performance.now() - lastHyperSpaceTime > hyperspaceInterval) {
             lastHyperSpaceTime = performance.now();
             hyperspace(objectsToAvoid); 
+            return true; 
+        }
+        else {
+            return false; 
         }
     }
 
