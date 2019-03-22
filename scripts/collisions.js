@@ -12,8 +12,21 @@ let Collisions = (function() {
         }
     }
 
+    function detectCirclePointCollision(circle, point) {
+        let distanceSquared = Math.pow(circle.center.x - point.center.x, 2) + 
+            Math.pow(circle.center.y - point.center.y, 2);
+        if (circle.radius * circle.radius > distanceSquared) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
     let api = {
-        detectCircleCollision: detectCircleCollision
+        detectCircleCollision: detectCircleCollision,
+        detectCirclePointCollision: detectCirclePointCollision
     };
 
     return api; 

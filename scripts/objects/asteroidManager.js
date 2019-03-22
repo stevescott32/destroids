@@ -47,7 +47,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
       rotation: rotation,
       rotationSpeed: rotationSpeed,
       break: false,
-      remove: false
+      isDead: false
     };
 
     return asteroid;
@@ -111,7 +111,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
 
   function explode(asteroid, particleSystemManager) {
     asteroidScore += 1;
-    asteroid.remove = true;
+    asteroid.isDead = true;
     particleSystemManager.createAsteroidBreakup(asteroid)
     if (asteroid.size.sizeCategory > 1) {
       let numToGenerate = 3 + (3 % asteroid.size.sizeCategory);
@@ -123,34 +123,11 @@ Game.objects.AsteroidManager = function (managerSpec) {
   }
 
 
-  function detectLaserCollisions(laserManager, particleSystemManager) {
-    for (let a = 0; a < asteroids.length; a++) {
-      let asteroid = asteroids[a];
-      if (!asteroid.remove && laserManager.detectCircleCollision(asteroid.center, asteroid.radius)) {
-        explode(asteroid, particleSystemManager);
-      }
-    }
-  }
-
-  // if the square of asteroid radius + input radius is greater than 
-  // the distance between the centers, return true
-  function detectCircleCollision(center, radius) {
-    for (let a = 0; a < asteroids.length; a++) {
-      let asteroid = asteroids[a];
-      let distanceSquared = Math.pow(center.x - asteroid.center.x, 2) + Math.pow(center.y - asteroid.center.y, 2);
-      let radiusSum = asteroid.radius + radius;
-      if (!asteroid.remove && radiusSum * radiusSum > distanceSquared) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   /// move asteroids according to speed and the elapsed time 
   function update(elapsedTime) {
-    if (asteroids[0] && asteroids[0].remove) {
-      asteroids.shift();
-    }
+    // remove dead asteroids
+    asteroids = asteroids.filter( asteroid => !asteroid.isDead); 
+
     populateAstroids(elapsedTime);
     for (let a = 0; a < asteroids.length; a++) {
       let asteroid = asteroids[a];
@@ -185,10 +162,9 @@ Game.objects.AsteroidManager = function (managerSpec) {
   }
 
   let api = {
-    detectLaserCollisions: detectLaserCollisions,
-    detectCircleCollision, detectCircleCollision,
     update: update,
     startGame: startGame,
+    explode, explode,
     get imageReady() { return imageReady; },
     get image() { return image; },
     get asteroids() { return asteroids; },
