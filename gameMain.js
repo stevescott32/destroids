@@ -145,16 +145,46 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         startGame(); 
     }
 
+    function playerHit() {
+        particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 
+        spaceShip.crashed = true;
+        lifeManager.loseLife(); 
+        if(lifeManager.isGameOver()) {
+            endGame(); 
+        }
+        else {
+            spaceShip.crashed = false; 
+            spaceShip.startGame(); 
+            spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
+            particleSystemManager.createNewLifeEffect(spaceShip); 
+        }
+    }
+
+    // detect all collisions that are occuring in the game
     function detectCollisions() {
+        // player lasers with alien ships
         alienShipManager.ships.forEach(ship => {
+            if(Collisions.detectCircleCollision(ship, spaceShip)) {
+                playerHit();
+                ship.crash();
+                particleSystemManager.createUFOExplosion(ship.center.x, ship.center.y); 
+            }
             spaceShipLasers.lasers.forEach(laser => {
                 if(Collisions.detectCircleCollision(ship, laser)) {
-                    console.log('Collision!'); 
                     ship.crash(); 
+                    laser.isDead = true; 
                     particleSystemManager.createUFOExplosion(ship.center.x, ship.center.y); 
                 } 
             })
         });
+
+        // alien lasers with player ship
+        alienLasers.lasers.forEach(laser => {
+            if(Collisions.detectCircleCollision(spaceShip, laser)) {
+                laser.isDead = true; 
+                playerHit(); 
+            }
+        })
     }
 
     // ********************************************
@@ -179,18 +209,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         detectCollisions(); 
 
         if (!spaceShip.crashed && asteroidManager.detectCircleCollision(spaceShip.center, spaceShip.radius)) {
-            particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 
-            spaceShip.crashed = true;
-            lifeManager.loseLife(); 
-            if(lifeManager.isGameOver()) {
-                endGame(); 
-            }
-            else {
-                spaceShip.crashed = false; 
-                spaceShip.startGame(); 
-                spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
-                particleSystemManager.createNewLifeEffect(spaceShip); 
-            }
+            playerHit(); 
         }
     }
 

@@ -128,7 +128,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
     function createUFOExplosion(xPos, yPos) {
         effects.push(makeEffect({
             center: { x: xPos, y: yPos },
-            size: { mean: 20, stdev: 4 }, 
+            size: { mean: 30, stdev: 4 }, 
             speed: { mean: 100, stdev: 20 }, 
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
@@ -137,7 +137,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         })); 
         effects.push(makeEffect({
             center: { x: xPos, y: yPos },
-            size: { mean: 20, stdev: 4 }, 
+            size: { mean: 30, stdev: 4 }, 
             speed: { mean: 100, stdev: 20 }, 
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 

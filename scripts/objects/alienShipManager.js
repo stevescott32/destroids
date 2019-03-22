@@ -77,8 +77,8 @@ Game.objects.AlienShipManager = function (spec) {
         return api; 
     }
 
-    function startGame() {
-        ships = []; 
+    function makeSmallShip() {
+        let firstShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
             imageSrc: 'resources/images/ships/greenShip.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
@@ -90,27 +90,35 @@ Game.objects.AlienShipManager = function (spec) {
             canvasHeight: spec.canvasHeight,
             canvasWidth: spec.canvasWidth,
             rotationRate: 1 * Math.PI / 16, // radians per second
-            rotation: Random.nextGaussian(Math.PI, (Math.PI / 2)), 
+            rotation: firstShipRotation, 
             crashed: false,
             fireRate: 1 // seconds
         })); 
-        
+    }
+
+    function makeLargeShip() {
+        let secondShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
             imageSrc: 'resources/images/ships/greyShip.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 50, height: 50 },
-            xSpeed: Random.nextGaussian(20, 3) * Math.cos(firstShipRotation),
-            ySpeed: Random.nextGaussian(-20, 3) * Math.sin(firstShipRotation), 
+            xSpeed: Random.nextGaussian(20, 3) * Math.cos(secondShipRotation),
+            ySpeed: Random.nextGaussian(-20, 3) * Math.sin(secondShipRotation), 
             radius: 20,
             canvasHeight: spec.canvasHeight,
             canvasWidth: spec.canvasWidth,
             rotationRate: 1 * Math.PI / 16, // radians per second
-            rotation: Random.nextGaussian(-Math.PI, (Math.PI / 2)), 
+            rotation: secondShipRotation,
             crashed: false,
             fireRate: 0.5 // seconds
         })); 
+    }
 
+    function startGame() {
+        ships = []; 
+        makeSmallShip();
+        makeLargeShip(); 
     }
 
     function update(elapsedTime) {
@@ -118,6 +126,10 @@ Game.objects.AlienShipManager = function (spec) {
         for(let s = 0; s < ships.length; s++) {
             let ship = ships[s]; 
             ship.update(elapsedTime); 
+        }
+        if(ships.length == 0) {
+            makeLargeShip();
+            makeSmallShip(); 
         }
     }
     
