@@ -1,6 +1,4 @@
 Game.screens['game-play'] = (function (game, objects, renderer, graphics, input, highScoreManager) {
-    console.log('Starting game main');
-
     let inputBuffer = {};
 
     // time
@@ -20,7 +18,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     // player spaceship. starts in the middle of the screen
     let spaceShip = objects.SpaceShip({
-        imageSrc: 'resources/images/spaceship-main.png',
+        imageSrc: 'resources/images/ships/ship3.png',
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2 },
         size: { width: 80, height: 80 },
         radius: 35,
@@ -34,10 +32,23 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     // manager for all lasers fired by player spaceship
     let spaceShipLasers = objects.LaserManager({
-        imageSrc: 'resources/images/laser.png',
+        imageSrc: 'resources/images/lasers/redLaser.png',
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         interval: 200 // milliseconds
+    });
+
+    let alienLasers = objects.LaserManager({
+        imageSrc: 'resources/images/lasers/purpleBlob.png',
+        maxX: graphics.canvas.height,
+        maxY: graphics.canvas.width,
+        interval: 500 // milliseconds
+   }); 
+
+   let alienShipManager = objects.AlienShipManager({
+        canvasHeight: graphics.canvas.height,
+        canvasWidth: graphics.canvas.width,
+        lasers: alienLasers
     });
 
     // manager for all asteroids in the game
@@ -50,17 +61,15 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         maxSpeed: 100,
         minSpeed: 50,
         interval: 1, // seconds
-        maxAsteroids: 20,
-        initialAsteroids: 10
+        maxAsteroids: 12,
+        initialAsteroids: 8
     }, objects);
 
     let lifeManager = objects.LifeManager({
         lives: 3
     }); 
 
-    let particleSystemManager = objects.ParticleSystemManager({
-
-    }); 
+    let particleSystemManager = objects.ParticleSystemManager({}); 
 
     // ********************************************
     // *********** Keyboard actions ***************
@@ -73,16 +82,22 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     }
 
     function hyperspace() {
-        spaceShip.playerHyperspace(asteroidManager.asteroids);  
-        particleSystemManager.createHyperspaceEffect(spaceShip); 
+        if(spaceShip.playerHyperspace(asteroidManager.asteroids)) {
+            particleSystemManager.createHyperspaceEffect(spaceShip); 
+        }
     }
 
     function escape() {
-        cancelNextRequest = true; 
-        game.showScreen('main-menu'); 
+        if(confirm("Are you sure you want to leave this game?")) {
+            cancelNextRequest = true; 
+            game.showScreen('main-menu'); 
+        }
+        else {
+            lastTimeStamp = performance.now(); 
+        }
+        gameKeyboard.reset(); 
+        initialize(); 
     }
-
-    
 
     // ********************************************
     // ********** Changing Game State *************
@@ -98,6 +113,9 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         spaceShip.startGame();
         asteroidManager.startGame(); 
         highScoreManager.startGame(); 
+        particleSystemManager.startGame(); 
+        spaceShipLasers.startGame(); 
+        alienShipManager.startGame(); 
         spaceShip.crashed = false; 
         startTime = performance.now();
         requestAnimationFrame(gameLoop);
@@ -109,6 +127,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         cancelNextRequest = true; 
         score = asteroidManager.asteroidScore;  
         highScoreManager.endGame(score); 
+        game.showScreen('main-menu'); 
     }
 
     // set up the game the first time it is loaded
@@ -122,15 +141,74 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
         gameKeyboard.register(' ', playerShoot);
         gameKeyboard.register('z', hyperspace); 
-        gameKeyboard.register('Z', hyperspace); 
         gameKeyboard.register('Escape', escape); 
     }
 
     function run() {
-        console.log('Running gameMain'); 
+        //graphics.canvas.width = window.innerWidth; 
+        //graphics.canvas.height = window.innerHeight; 
         lastTimeStamp = performance.now(); 
         cancelNextRequest = false; 
         startGame(); 
+    }
+
+    function playerHit() {
+        particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 
+        spaceShip.crashed = true;
+        lifeManager.loseLife(); 
+        if(lifeManager.isGameOver()) {
+            endGame(); 
+        }
+        else {
+            spaceShip.crashed = false; 
+            spaceShip.startGame(); 
+            spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
+            particleSystemManager.createNewLifeEffect(spaceShip); 
+        }
+    }
+
+    // ********************************************
+    // ************* Collisions *******************
+    // ********************************************
+
+    // detect all collisions that are occuring in the game
+    function detectCollisions() {
+        // alien ships with player and player lasers 
+        alienShipManager.ships.forEach(ship => {
+            if(Collisions.detectCircleCollision(ship, spaceShip)) {
+                playerHit();
+                ship.crash();
+                particleSystemManager.createUFOExplosion(ship.center.x, ship.center.y); 
+            }
+            spaceShipLasers.lasers.forEach(laser => {
+                if(!laser.isDead && Collisions.detectCircleCollision(ship, laser)) {
+                    ship.crash(); 
+                    laser.isDead = true; 
+                    particleSystemManager.createUFOExplosion(ship.center.x, ship.center.y); 
+                } 
+            })
+        });
+
+        // alien lasers with player ship
+        alienLasers.lasers.forEach(laser => {
+            if(Collisions.detectCirclePointCollision(spaceShip, laser)) {
+                laser.isDead = true; 
+                playerHit(); 
+            }
+        }); 
+
+        // asteroids with player ship and player lasers
+        asteroidManager.asteroids.forEach(asteroid => {
+            spaceShipLasers.lasers.forEach(laser =>{
+                if(!laser.isDead && Collisions.detectCirclePointCollision(asteroid, laser)) {
+                    asteroidManager.explode(asteroid, particleSystemManager); 
+                    laser.isDead = true; 
+                }
+            })
+            if(Collisions.detectCircleCollision(spaceShip, asteroid)) {
+                playerHit(); 
+            }
+        }); 
     }
 
     // ********************************************
@@ -139,31 +217,18 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     // update function manages end time update
     function update(elapsedTime) {
+        // update all game objects
         gameKeyboard.update(elapsedTime);
         asteroidManager.update(elapsedTime);
         spaceShipLasers.update(elapsedTime);
-        if(!quit) {
-            spaceShip.update(elapsedTime);
-            asteroidManager.detectLaserCollisions(spaceShipLasers, particleSystemManager);
-        }
+        alienLasers.update(elapsedTime);
+        alienShipManager.update(elapsedTime); 
+        spaceShip.update(elapsedTime);
         particleSystemManager.update(elapsedTime); 
-        score = asteroidManager.asteroidScore; 
         highScoreManager.update(elapsedTime, score); 
 
-        if (!spaceShip.crashed && asteroidManager.detectCircleCollision(spaceShip.center, spaceShip.radius)) {
-            particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 
-            spaceShip.crashed = true;
-            lifeManager.loseLife(); 
-            if(lifeManager.isGameOver()) {
-                endGame(); 
-            }
-            else {
-                spaceShip.crashed = false; 
-                spaceShip.startGame(); 
-                spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
-                particleSystemManager.createNewLifeEffect(spaceShip); 
-            }
-        }
+        score = asteroidManager.asteroidScore; 
+        detectCollisions(); 
     }
 
     // *****************************************
@@ -173,11 +238,11 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         graphics.context.clearRect(0, 0, graphics.canvas.width, graphics.canvas.height);
         renderer.Laser.render(spaceShipLasers);
         renderer.Asteroid.render(asteroidManager);
-        if(!quit) {
-            renderer.SpaceShip.render(spaceShip); 
-        }
+        renderer.AlienShipManager.render(alienShipManager); 
+        renderer.SpaceShip.render(spaceShip); 
         renderer.ParticleSystemManager.render(particleSystemManager);
         highScoreManager.render(); 
+        renderer.Laser.render(alienLasers);
     }
 
 

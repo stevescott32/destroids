@@ -81,10 +81,10 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             center: { x: spaceship.center.x, y: spaceship.center.y },
             size: { mean: 20, stdev: 4 }, 
             speed: { mean: 400, stdev: 20 }, 
-            lifetime: { mean: 0.2, stdev: 0.1 }, 
-            explosionLifetime: 0.2, 
+            lifetime: { mean: 0.5, stdev: 0.1 }, 
+            explosionLifetime: 0.5, 
             density: 8, 
-            imageSrc: "resources/images/greenBlob.png"
+            imageSrc: "resources/textures/flare.png"
         })); 
     }
 
@@ -96,7 +96,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 0.3, stdev: 0.1 }, 
             explosionLifetime: 0.3, 
             density: 8, 
-            imageSrc: "resources/images/greenBlob.png"
+            imageSrc: "resources/images/lasers/greenBlob.png"
         })); 
     }
 
@@ -109,7 +109,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: (0.4 + sc * 0.1), stdev: 0.2 }, 
             explosionLifetime: 0.4 + sc * 0.1, 
             density: sc * sc * 5, 
-            imageSrc: "resources/images/smoke.png"
+            imageSrc: "resources/textures/smoke.png"
         })); 
     }
 
@@ -121,30 +121,34 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
             density: 10, 
-            imageSrc: "resources/images/fire.png"
+            imageSrc: "resources/textures/fire.png"
         })); 
     }
 
     function createUFOExplosion(xPos, yPos) {
         effects.push(makeEffect({
             center: { x: xPos, y: yPos },
-            size: { mean: 20, stdev: 4 }, 
+            size: { mean: 30, stdev: 4 }, 
             speed: { mean: 100, stdev: 20 }, 
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
             density: 5, 
-            imageSrc: "resources/images/smoke.png"
+            imageSrc: "resources/textures/smoke.png"
         })); 
         effects.push(makeEffect({
             center: { x: xPos, y: yPos },
-            size: { mean: 20, stdev: 4 }, 
+            size: { mean: 30, stdev: 4 }, 
             speed: { mean: 100, stdev: 20 }, 
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
             density: 8, 
-            imageSrc: "resources/images/fire.png"
+            imageSrc: "resources/textures/fire.png"
         })); 
 
+    }
+
+    function startGame() {
+        effects = []; 
     }
 
     function update(elapsedTime) {
@@ -162,6 +166,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createUFOExplosion: createUFOExplosion,
         createHyperspaceEffect: createHyperspaceEffect,
         createNewLifeEffect: createNewLifeEffect,
+        startGame: startGame,
         update: update,
         get effects() { return effects; },
     }

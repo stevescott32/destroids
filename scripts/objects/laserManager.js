@@ -6,7 +6,6 @@
  */
 Game.objects.LaserManager = function (managerSpec) {
   'user strict'; 
-  console.log('Initializing laser manager'); 
 
   let lasers = [];
   let lastTimeFired = 0;  
@@ -27,6 +26,7 @@ Game.objects.LaserManager = function (managerSpec) {
       xSpeed: Math.cos(laserSpec.rotation) * laserSpec.speed,
       ySpeed: Math.sin(laserSpec.rotation) * laserSpec.speed,
       size: laserSpec.size,
+      radius: laserSpec.size.height,
       rotation: laserSpec.rotation,
       isDead: false
     };
@@ -44,17 +44,9 @@ Game.objects.LaserManager = function (managerSpec) {
     }
   }
 
-
-  // check if the circle object has collided with any of the lasers in the laser manager 
-  function detectCircleCollision(center, radius) {
-    for(let l = 0; l < lasers.length; l++) {
-      let laser = lasers[l]; 
-      let distanceSquared = Math.pow(center.x - laser.center.x, 2) + Math.pow(center.y - laser.center.y, 2); 
-      if(!laser.isDead && radius * radius > distanceSquared) {
-        laser.isDead = true; 
-        return true; 
-      }
-    }
+  function startGame() {
+    lasers = []; 
+    lastTimeFired = 0; 
   }
 
   function update(elapsedTime) {
@@ -69,13 +61,14 @@ Game.objects.LaserManager = function (managerSpec) {
       if (laser.center.x < 0 || laser.center.y < 0 ||
         laser.center.x > managerSpec.maxX || laser.center.y > managerSpec.maxY) {
         laser.isDead = true;
+        console.log('Laser out of bounds'); 
       }
     }
   }
 
   let api = {
     addLaser: addLaser,
-    detectCircleCollision: detectCircleCollision,
+    startGame: startGame,
     update: update,
     get imageReady() { return imageReady; },
     get image() { return image; },

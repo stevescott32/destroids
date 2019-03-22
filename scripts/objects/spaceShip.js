@@ -66,7 +66,7 @@ Game.objects.SpaceShip = function (spec) {
             y: spec.center.y
         };
         let laserSize = {
-            width: 25,
+            width: 35,
             height: 15
         };
         let laserRotation = rotation;
@@ -147,6 +147,10 @@ Game.objects.SpaceShip = function (spec) {
         if (performance.now() - lastHyperSpaceTime > hyperspaceInterval) {
             lastHyperSpaceTime = performance.now();
             hyperspace(objectsToAvoid); 
+            return true; 
+        }
+        else {
+            return false; 
         }
     }
 
