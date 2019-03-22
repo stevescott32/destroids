@@ -84,7 +84,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 0.2, stdev: 0.1 }, 
             explosionLifetime: 0.2, 
             density: 8, 
-            imageSrc: "resources/images/greenBlob.png"
+            imageSrc: "resources/images/lasers/lightBlueBlob.png"
         })); 
     }
 
@@ -96,7 +96,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 0.3, stdev: 0.1 }, 
             explosionLifetime: 0.3, 
             density: 8, 
-            imageSrc: "resources/images/greenBlob.png"
+            imageSrc: "resources/images/lasers/greenBlob.png"
         })); 
     }
 
@@ -109,7 +109,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: (0.4 + sc * 0.1), stdev: 0.2 }, 
             explosionLifetime: 0.4 + sc * 0.1, 
             density: sc * sc * 5, 
-            imageSrc: "resources/images/smoke.png"
+            imageSrc: "resources/textures/smoke.png"
         })); 
     }
 
@@ -121,7 +121,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
             density: 10, 
-            imageSrc: "resources/images/fire.png"
+            imageSrc: "resources/textures/fire.png"
         })); 
     }
 
@@ -133,7 +133,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
             density: 5, 
-            imageSrc: "resources/images/smoke.png"
+            imageSrc: "resources/textures/smoke.png"
         })); 
         effects.push(makeEffect({
             center: { x: xPos, y: yPos },
@@ -142,7 +142,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             lifetime: { mean: 1, stdev: 0.5 }, 
             explosionLifetime: 1, 
             density: 8, 
-            imageSrc: "resources/images/fire.png"
+            imageSrc: "resources/textures/fire.png"
         })); 
 
     }

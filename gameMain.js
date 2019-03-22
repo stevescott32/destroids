@@ -18,7 +18,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     // player spaceship. starts in the middle of the screen
     let spaceShip = objects.SpaceShip({
-        imageSrc: 'resources/images/spaceship-main.png',
+        imageSrc: 'resources/images/ships/ship3.png',
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2 },
         size: { width: 80, height: 80 },
         radius: 35,
@@ -32,14 +32,14 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     // manager for all lasers fired by player spaceship
     let spaceShipLasers = objects.LaserManager({
-        imageSrc: 'resources/images/laser.png',
+        imageSrc: 'resources/images/lasers/laser.png',
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         interval: 200 // milliseconds
     });
 
     let alienLasers = objects.LaserManager({
-        imageSrc: 'resources/images/purpleBlob.png',
+        imageSrc: 'resources/images/lasers/purpleBlob.png',
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         interval: 500 // milliseconds

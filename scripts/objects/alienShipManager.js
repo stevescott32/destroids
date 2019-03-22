@@ -89,7 +89,7 @@ Game.objects.AlienShipManager = function (spec) {
         ships = []; 
         let firstShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
-            imageSrc: 'resources/images/smallAlien.png',
+            imageSrc: 'resources/images/ships/greyShip.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 80, height: 80 },
@@ -106,7 +106,7 @@ Game.objects.AlienShipManager = function (spec) {
         
         let secondShipRotation = Random.nextGaussian(-Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
-            imageSrc: 'resources/images/largeAlien.png',
+            imageSrc: 'resources/images/ships/greenShip.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 50, height: 50 },
@@ -118,7 +118,7 @@ Game.objects.AlienShipManager = function (spec) {
             rotationRate: 1 * Math.PI / 16, // radians per second
             rotation:secondShipRotation, 
             crashed: false,
-            fireRate: 2 // seconds
+            fireRate: 0.5 // seconds
         })); 
 
     }
