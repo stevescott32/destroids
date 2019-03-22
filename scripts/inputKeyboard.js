@@ -26,6 +26,11 @@ Game.input.Keyboard = function () {
         keyboard.handlers[key] = handler;
     };
 
+    keyboard.reset = function () {
+        keyboard.handlers = {}; 
+        keyboard.keys = {}; 
+    }
+
     window.addEventListener('keydown', keyPress);
     window.addEventListener('keyup', keyRelease);
 

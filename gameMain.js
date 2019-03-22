@@ -88,8 +88,15 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     }
 
     function escape() {
-        cancelNextRequest = true; 
-        game.showScreen('main-menu'); 
+        if(confirm("Are you sure you want to leave this game?")) {
+            cancelNextRequest = true; 
+            game.showScreen('main-menu'); 
+        }
+        else {
+            lastTimeStamp = performance.now(); 
+        }
+        gameKeyboard.reset(); 
+        initialize(); 
     }
 
     // ********************************************
