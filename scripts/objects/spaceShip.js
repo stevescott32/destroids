@@ -28,6 +28,10 @@ Game.objects.SpaceShip = function (spec) {
     };
     image.src = spec.imageSrc;
 
+    function getHyperspacePercentage() {
+        return (performance.now() - lastHyperSpaceTime) / hyperspaceInterval; 
+    }
+
     function rotateLeft(elapsedTime) {
         rotation -= spec.rotationRate * (elapsedTime / 100);
         if (rotation < 0) {
@@ -193,6 +197,7 @@ Game.objects.SpaceShip = function (spec) {
         shoot: shoot,
         newLifeHyperspace: newLifeHyperspace,
         playerHyperspace: playerHyperspace,
+        getHyperspacePercentage: getHyperspacePercentage,
         get imageReady() { return imageReady; },
         get rotation() { return rotation; },
         get image() { return image; },
