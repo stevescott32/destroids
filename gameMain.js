@@ -145,6 +145,18 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         startGame(); 
     }
 
+    function detectCollisions() {
+        alienShipManager.ships.forEach(ship => {
+            spaceShipLasers.lasers.forEach(laser => {
+                if(Collisions.detectCircleCollision(ship, laser)) {
+                    console.log('Collision!'); 
+                    ship.crash(); 
+                    particleSystemManager.createUFOExplosion(ship.center.x, ship.center.y); 
+                } 
+            })
+        });
+    }
+
     // ********************************************
     // ***************** Update *******************
     // ********************************************
@@ -163,6 +175,8 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         particleSystemManager.update(elapsedTime); 
         score = asteroidManager.asteroidScore; 
         highScoreManager.update(elapsedTime, score); 
+
+        detectCollisions(); 
 
         if (!spaceShip.crashed && asteroidManager.detectCircleCollision(spaceShip.center, spaceShip.radius)) {
             particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 

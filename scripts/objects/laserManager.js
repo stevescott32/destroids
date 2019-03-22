@@ -27,6 +27,7 @@ Game.objects.LaserManager = function (managerSpec) {
       xSpeed: Math.cos(laserSpec.rotation) * laserSpec.speed,
       ySpeed: Math.sin(laserSpec.rotation) * laserSpec.speed,
       size: laserSpec.size,
+      radius: laserSpec.size.width,
       rotation: laserSpec.rotation,
       isDead: false
     };

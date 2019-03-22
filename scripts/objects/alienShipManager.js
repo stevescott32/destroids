@@ -1,24 +1,21 @@
 Game.objects.AlienShipManager = function (spec) {
     'use strict';
-    console.log('Initializing alien ship');
-    let MAX_SPEED = 200;
     let ships = []; 
 
     function createNewShip(shipSpec) {
         let imageReady = false;
         let image = new Image();
-
-        let lastShot = 0; 
-
         image.onload = function () {
             imageReady = true;
         };
         image.src = shipSpec.imageSrc;
 
+        let lastShot = 0; 
+        let isDead = false; 
+
         // determine where the ship is and return a spec with 
         // the current point in the direction of the ship 
         function shoot() {
-            console.log('Shooting a new alien laser'); 
             let laserCenter = {
                 x: shipSpec.center.x,
                 y: shipSpec.center.y
@@ -35,6 +32,10 @@ Game.objects.AlienShipManager = function (spec) {
                 rotation: laserRotation
             };
             return laserSpec;
+        }
+
+        function crash() {
+            isDead = true; 
         }
 
         function update(elapsedTime) {
@@ -55,7 +56,7 @@ Game.objects.AlienShipManager = function (spec) {
             }
 
             // shoot a laser
-            if(performance.now() - lastShot > shipSpec.fireRate * 1000) {
+            if(performance.now() - lastShot > shipSpec.fireRate * 1000 && !isDead) {
                 spec.lasers.addLaser(shoot()); 
                 lastShot = performance.now(); 
             }
@@ -63,33 +64,23 @@ Game.objects.AlienShipManager = function (spec) {
 
         let api = {
             update: update,
+            crash: crash,
             get imageReady() { return imageReady; },
             get rotation() { return shipSpec.rotation; },
             get image() { return image; },
             get center() { return shipSpec.center; },
             get size() { return shipSpec.size; },
+            get isDead() { return isDead; },
             get radius() { return shipSpec.radius; }
         }
 
         return api; 
     }
 
-    function detectCircleCollision(objectToAvoid, center, radius) {
-        let distanceSquared = Math.pow(center.x - objectToAvoid.center.x, 2) + Math.pow(center.y - objectToAvoid.center.y, 2);
-        let radiusSum = objectToAvoid.radius + radius;
-        if (!objectToAvoid.remove && radiusSum * radiusSum > distanceSquared) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
     function startGame() {
         ships = []; 
-        let firstShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
-            imageSrc: 'resources/images/ships/greyShip.png',
+            imageSrc: 'resources/images/ships/greenShip.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 80, height: 80 },
@@ -99,14 +90,13 @@ Game.objects.AlienShipManager = function (spec) {
             canvasHeight: spec.canvasHeight,
             canvasWidth: spec.canvasWidth,
             rotationRate: 1 * Math.PI / 16, // radians per second
-            rotation:firstShipRotation, 
+            rotation: Random.nextGaussian(Math.PI, (Math.PI / 2)), 
             crashed: false,
             fireRate: 1 // seconds
         })); 
         
-        let secondShipRotation = Random.nextGaussian(-Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
-            imageSrc: 'resources/images/ships/greenShip.png',
+            imageSrc: 'resources/images/ships/greyShip.png',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 50, height: 50 },
@@ -116,7 +106,7 @@ Game.objects.AlienShipManager = function (spec) {
             canvasHeight: spec.canvasHeight,
             canvasWidth: spec.canvasWidth,
             rotationRate: 1 * Math.PI / 16, // radians per second
-            rotation:secondShipRotation, 
+            rotation: Random.nextGaussian(-Math.PI, (Math.PI / 2)), 
             crashed: false,
             fireRate: 0.5 // seconds
         })); 
@@ -124,6 +114,7 @@ Game.objects.AlienShipManager = function (spec) {
     }
 
     function update(elapsedTime) {
+        ships = ships.filter(ship => !ship.isDead);
         for(let s = 0; s < ships.length; s++) {
             let ship = ships[s]; 
             ship.update(elapsedTime); 
