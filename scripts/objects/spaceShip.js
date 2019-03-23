@@ -18,11 +18,11 @@ Game.objects.SpaceShip = function (spec) {
     let rotation = Math.PI / 2;
     let xSpeed = 0;
     let ySpeed = 0;
-    let imageReady = false;
-    let image = new Image();
     let lastHyperSpaceTime = 0;
     let hyperspaceInterval = spec.hyperspaceInterval * 1000 // miliseconds
 
+    let imageReady = false;
+    let image = new Image();
     image.onload = function () {
         imageReady = true;
     };
@@ -163,6 +163,11 @@ Game.objects.SpaceShip = function (spec) {
         hyperspace(objectsToAvoid); 
     }
 
+    function crash() {
+        let audio = new Audio(spec.audioSrc);
+        audio.play(); 
+    }
+
     function startGame() {
         rotation = Math.PI / 2;
         xSpeed = 0;
@@ -194,6 +199,7 @@ Game.objects.SpaceShip = function (spec) {
         rotateRight: rotateRight,
         thrust: thrust,
         moveTo: moveTo,
+        crash: crash,
         shoot: shoot,
         newLifeHyperspace: newLifeHyperspace,
         playerHyperspace: playerHyperspace,

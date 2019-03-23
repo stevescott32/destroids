@@ -36,6 +36,8 @@ Game.objects.AlienShipManager = function (spec) {
 
         function crash() {
             isDead = true; 
+            let audio = new Audio(shipSpec.audioSrc);
+            audio.play(); 
         }
 
         function update(elapsedTime) {
@@ -56,7 +58,9 @@ Game.objects.AlienShipManager = function (spec) {
             }
 
             // shoot a laser
-            if(performance.now() - lastShot > shipSpec.fireRate * 1000 && !isDead) {
+            if(performance.now() - lastShot > shipSpec.fireRate * 1000 && !isDead
+            && shipSpec.center.x > 0 && shipSpec.center.y > 0
+            && shipSpec.center.x < shipSpec.canvasWidth && shipSpec.center.y < shipSpec.canvasHeight) {
                 spec.lasers.addLaser(shoot()); 
                 lastShot = performance.now(); 
             }
@@ -81,6 +85,7 @@ Game.objects.AlienShipManager = function (spec) {
         let firstShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
             imageSrc: 'resources/images/ships/greenShip.png',
+            audioSrc: 'resources/audio/zapsplat_explosion.mp3',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 80, height: 80 },
@@ -100,6 +105,7 @@ Game.objects.AlienShipManager = function (spec) {
         let secondShipRotation = Random.nextGaussian(Math.PI, (Math.PI / 2)); 
         ships.push(createNewShip({
             imageSrc: 'resources/images/ships/greyShip.png',
+            audioSrc: 'resources/audio/zapsplat_explosion2.mp3',
             center: { x: Random.nextGaussian(spec.canvasWidth, 10), 
                 y: Random.nextGaussian(spec.canvasHeight, 10)},
             size: { width: 50, height: 50 },

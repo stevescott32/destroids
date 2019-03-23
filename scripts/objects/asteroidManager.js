@@ -1,4 +1,3 @@
-
 /*****************************************
  spec = {
     interval,
@@ -10,6 +9,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
   let asteroids = [];
   let accumulatedTime = 0;
   let asteroidScore = 0;
+  let disableAudio = false; 
 
   let image = new Image();
   let imageReady = false;
@@ -109,6 +109,10 @@ Game.objects.AsteroidManager = function (managerSpec) {
     }
   }
 
+  function toggleAudio() {
+    disableAudio = !disableAudio; 
+  }
+
   function explode(asteroid, particleSystemManager) {
     asteroidScore += 1;
     asteroid.isDead = true;
@@ -120,6 +124,11 @@ Game.objects.AsteroidManager = function (managerSpec) {
       }
     }
     console.log('Asteroids size ' + asteroids.length); 
+    if(!disableAudio) {
+      let audio = new Audio(managerSpec.audioSrc);
+      audio.volume = 0.1;
+      audio.play(); 
+    }
   }
 
 
@@ -165,6 +174,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
     update: update,
     startGame: startGame,
     explode, explode,
+    toggleAudio, toggleAudio, 
     get imageReady() { return imageReady; },
     get image() { return image; },
     get asteroids() { return asteroids; },

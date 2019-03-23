@@ -9,12 +9,18 @@ Game.objects.LaserManager = function (managerSpec) {
 
   let lasers = [];
   let lastTimeFired = 0;  
+  let disableAudio = false; 
+
   let image = new Image(); 
   let imageReady = false;
   image.onload = function () {
     imageReady = true;
   };
   image.src = managerSpec.imageSrc;
+
+    function toggleAudio() {
+      disableAudio = !disableAudio; 
+    }
 
   function makeLaser(laserSpec) {
     let center = {
@@ -40,7 +46,10 @@ Game.objects.LaserManager = function (managerSpec) {
     if(performance.now() - lastTimeFired > managerSpec.interval) {
       lastTimeFired = performance.now(); 
       lasers.push(makeLaser(spec));
-      // TODO: make noise
+      if(!disableAudio) {
+        let audio = new Audio(managerSpec.audioSrc); 
+        audio.play(); 
+      }
     }
   }
 
@@ -70,6 +79,7 @@ Game.objects.LaserManager = function (managerSpec) {
     addLaser: addLaser,
     startGame: startGame,
     update: update,
+    toggleAudio: toggleAudio,
     get imageReady() { return imageReady; },
     get image() { return image; },
     get lasers() { return lasers; }, 
