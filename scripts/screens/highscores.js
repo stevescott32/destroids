@@ -5,11 +5,13 @@ Game.screens['high-scores'] = (function(game) {
         document.getElementById('id-high-scores-back').addEventListener(
             'click',
             function() { game.showScreen('main-menu'); });
-    }
+         document.getElementById('id-high-scores-new-game').addEventListener(
+            'click',
+            function() { game.showScreen('game-play'); });
+   }
     
     function run() {
-        //
-        // I know this is empty, there isn't anything to do.
+          Game.highScores.render(); 
     }
     
     return {

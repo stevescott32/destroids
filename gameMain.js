@@ -150,7 +150,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         cancelNextRequest = true; 
         score = asteroidManager.asteroidScore;  
         highScoreManager.endGame(score); 
-        game.showScreen('main-menu'); 
+        game.showScreen('high-scores'); 
     }
 
     // set up the game the first time it is loaded
