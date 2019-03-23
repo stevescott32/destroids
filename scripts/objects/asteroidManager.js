@@ -62,8 +62,8 @@ Game.objects.AsteroidManager = function (managerSpec) {
   function generateNewAsteroid() {
     let sizeCategory = Math.ceil(Math.random() * 3);
     let center = {
-      x: Random.nextGaussian(managerSpec.maxX / 2, managerSpec.maxX / 4),
-      y: Random.nextGaussian(managerSpec.maxY / 2, managerSpec.maxY / 4),
+      x: Random.nextGaussian(Game.graphics.canvas.width / 2, Game.graphics.canvas.width / 4),
+      y: Random.nextGaussian(Game.graphics.canvas.height  / 2, Game.graphics.canvas.height / 4),
     }
 
     // this switch statement will have asteroids start from 
@@ -74,13 +74,13 @@ Game.objects.AsteroidManager = function (managerSpec) {
         center.x = 0 - sizeCategory * managerSpec.minSize / 2;
         break;
       case 1:
-        center.x = managerSpec.maxX + sizeCategory * managerSpec.minSize / 2;
+        center.x = Game.graphics.canvas.width + sizeCategory * managerSpec.minSize / 2;
         break;
       case 2:
         center.y = 1 - sizeCategory * managerSpec.minSize / 2;
         break;
       case 3:
-        center.y = managerSpec.maxY + sizeCategory * managerSpec.minSize / 2;
+        center.y = Game.graphics.canvas.width + sizeCategory * managerSpec.minSize / 2;
         break;
     }
     return asteroidMaker({
@@ -121,7 +121,6 @@ Game.objects.AsteroidManager = function (managerSpec) {
         asteroids.push(generateBrokenAsteroid(asteroid.center.x, asteroid.center.y, asteroid.size.sizeCategory - 1));
       }
     }
-    console.log('Asteroids size ' + asteroids.length); 
     if(!disableAudio) {
       let audio = new Audio(managerSpec.audioSrc);
       audio.volume = 0.3;
@@ -144,16 +143,16 @@ Game.objects.AsteroidManager = function (managerSpec) {
 
       if(asteroid.center.x + asteroid.radius < 0) 
       {
-          asteroid.center.x = managerSpec.maxX + asteroid.radius; 
+          asteroid.center.x = Game.graphics.canvas.width + asteroid.radius; 
       }
-      else if(asteroid.center.x - asteroid.radius > managerSpec.maxX) {
+      else if(asteroid.center.x - asteroid.radius > Game.graphics.canvas.width) {
           asteroid.center.x = 0 - asteroid.radius; 
       }
       else if(asteroid.center.y + asteroid.radius < 0) 
       {
-          asteroid.center.y = managerSpec.maxY + asteroid.radius; 
+          asteroid.center.y = Game.graphics.canvas.height + asteroid.radius; 
       }
-      else if(asteroid.center.y - asteroid.radius > managerSpec.maxY) {
+      else if(asteroid.center.y - asteroid.radius > Game.graphics.canvas.height) {
           asteroid.center.y = 0 - asteroid.radius; 
       }
     }

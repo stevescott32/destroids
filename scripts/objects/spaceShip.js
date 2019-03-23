@@ -12,7 +12,6 @@
 // --------------------------------------------------------------
 Game.objects.SpaceShip = function (spec) {
     'use strict';
-    console.log('Initializing space ship');
     let MAX_SPEED = 200;
 
     let rotation = Math.PI / 2;
@@ -128,8 +127,8 @@ Game.objects.SpaceShip = function (spec) {
     function hyperspace(objectsToAvoid) {
         let possibleLocations = [];
         // calculate the danger of each space ship location
-        for (let x = 2 * spec.size.width; x < spec.canvasWidth - (2 * spec.size.width); x += 2 * spec.size.width) {
-            for (let y = 2 * spec.size.height; y < spec.canvasHeight - (2 * spec.size.height); y += 2 * spec.size.height) {
+        for (let x = 2 * spec.size.width; x < Game.graphics.canvas.width - (2 * spec.size.width); x += 2 * spec.size.width) {
+            for (let y = 2 * spec.size.height; y < Game.graphics.canvas.height - (2 * spec.size.height); y += 2 * spec.size.height) {
                 possibleLocations.push(calculateSafety(objectsToAvoid, x, y));
             }
         }
@@ -176,22 +175,22 @@ Game.objects.SpaceShip = function (spec) {
         rotation = Math.PI / 2;
         xSpeed = 0;
         ySpeed = 0;
-        spec.center = { x: spec.canvasWidth / 2, y: spec.canvasHeight / 2 };
+        spec.center = { x: Game.graphics.canvas.width / 2, y: Game.graphics.canvas.height / 2 };
     }
 
     function update(elapsedTime) {
         spec.center.x -= xSpeed * (elapsedTime / 100);
         spec.center.y -= ySpeed * (elapsedTime / 100);
         if (spec.center.x < 0) {
-            spec.center.x = spec.canvasWidth;
+            spec.center.x = Game.graphics.canvas.width;
         }
-        else if (spec.center.x > spec.canvasWidth) {
+        else if (spec.center.x > Game.graphics.canvas.width) {
             spec.center.x = 0;
         }
         else if (spec.center.y < 0) {
-            spec.center.y = spec.canvasHeight;
+            spec.center.y = Game.graphics.canvas.height;
         }
-        else if (spec.center.y > spec.canvasHeight) {
+        else if (spec.center.y > Game.graphics.canvas.height) {
             spec.center.y = 0;
         }
     }

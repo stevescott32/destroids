@@ -22,8 +22,8 @@ body {
 }
 
 canvas {
-  border: var(--main-dark-contrast) 6px solid;
-  border-radius: 4px; 
+  width: 100%;
+  height: 100%;
 }
 
 .basicButton {
@@ -103,39 +103,26 @@ footer {
   height: 10%;
 }
 
-.leftPane {
-  top: 15%; 
-  left: 5%;
-  width: 15%; 
-  float: left; 
-  border: 4px; 
-  border-color: white; 
+.scoreDisplay {
+  top: 3%; 
+  left: 3%;
+  width: 10%; 
+  float: right; 
   position: fixed; 
   height: 75%; 
-  justify-content: center
+  justify-content: right
 }
 
 .centerPane {
-  top: 5%; 
-  left: 20%;
-  width: 60%; 
+  top: 0%; 
+  left: 0%;
+  width: 100%; 
   float: center; 
   border: 4px; 
   border-color: white; 
   position: fixed; 
-  height: 90%; 
+  height: 100%; 
   justify-content: center
-}
-
-.rightPane {
-  top: 15%;  
-  left: 85%; 
-  width: 15%; 
-  float: right; 
-  border: 4px; 
-  border-color: white; 
-  position: fixed; 
-  height: 75%; 
 }
 
 .noBullet {
@@ -242,6 +229,6 @@ ul.menu li button:active {
 
 #myBar {
   width: 1%;
-  height: 30px;
+  height: 20px;
   background-color: grey;  
 }

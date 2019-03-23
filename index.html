@@ -27,6 +27,7 @@
         <li><button id="id-about">About</button></li>
       </ul>
     </div>
+
     <div id="high-scores" class="screen">
       <h1>High Scores</h1>
       <div id='highScoresList'>
@@ -42,6 +43,7 @@
         <li><button id="id-high-scores-new-game">New Game</button></li>
       </ul>
     </div>
+
     <div id="help" class="screen">
       <h1>Help</h1>
       <p>Controls: </p>
@@ -55,6 +57,7 @@
         <li><button id="id-help-back">Back</button></li>
       </ul>
     </div>
+
     <div id="about" class="screen">
       <h1>About</h1>
       <p>Development: </p>
@@ -77,14 +80,8 @@
       </ul>
     </div>
 
-
-
     <div id="game-play" class="screen">
-      <div class="centerPane">
-        <canvas id="id-canvas" width="1000" height="1000" 
-        style="width: 100%; height: 100%; "></canvas>
-      </div>
-      <div id="left" class="leftPane">
+       <div id="left" class="scoreDisplay">
         <div>
           <div id="current-game-stats"></div>
         </div>
@@ -93,8 +90,12 @@
           <div id="myBar"></div>
         </div>
       </div>
+     <div class="centerPane">
+        <canvas id="id-canvas"></canvas>
+      </div>
     </div>
   </div>
+
   <script src="scripts/render/core.js"></script>
   <script src="scripts/render/particlesystem.js"></script>
   <script src="scripts/render/spaceship.js"></script>
