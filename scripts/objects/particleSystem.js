@@ -26,6 +26,11 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
                 alive: 0
             };
 
+            if(spec.thrustEffect) {
+                p.direction.x = Math.cos(spec.spaceShipDirection); 
+                p.direction.y = Math.sin(spec.spaceShipDirection); 
+            }
+
             return p;
         }
 
@@ -34,7 +39,6 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             Object.getOwnPropertyNames(particles).forEach(function () {
                 count++; 
             }); 
-            console.log('Count: ' + count); 
 
             if(systemTotalTime > spec.explosionLifetime && count == 0) {
                 return true;
@@ -82,6 +86,22 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         };
 
         return api;
+    }
+    
+    function createThrustEffect(spaceship) {
+        let x = spaceship.center.x + Math.cos(spaceship.rotation) * spaceship.radius; 
+        let y = spaceship.center.y + Math.sin(spaceship.rotation) * spaceship.radius; 
+        effects.push(makeEffect({
+            center: { x: x, y: y },
+            size: { mean: 15, stdev: 6 }, 
+            speed: { mean: 400, stdev: 30 }, 
+            lifetime: { mean: 0.1, stdev: 0.1 }, 
+            explosionLifetime: 0.1, 
+            density: 3, 
+            imageSrc: "resources/textures/fire.png",
+            thrustEffect: true,
+            spaceShipDirection: spaceship.rotation
+        })); 
     }
 
     function createHyperspaceEffect(spaceship) {
@@ -174,6 +194,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createUFOExplosion: createUFOExplosion,
         createHyperspaceEffect: createHyperspaceEffect,
         createNewLifeEffect: createNewLifeEffect,
+        createThrustEffect: createThrustEffect, 
         startGame: startGame,
         update: update,
         get effects() { return effects; },

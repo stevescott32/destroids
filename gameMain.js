@@ -91,9 +91,6 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
             spaceShipLasers.toggleAudio();
             asteroidManager.toggleAudio();
         } 
-        else {
-            console.log('Too soon for the audio'); 
-        }
     }
 
     function playerShoot() {
@@ -106,6 +103,11 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         if(spaceShip.playerHyperspace(asteroidManager.asteroids)) {
             particleSystemManager.createHyperspaceEffect(spaceShip); 
         }
+    }
+
+    function thrust() {
+        spaceShip.thrust(); 
+        particleSystemManager.createThrustEffect(spaceShip); 
     }
 
     function escape() {
@@ -157,7 +159,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
             inputBuffer[event.key] = event.key;
         });
 
-        gameKeyboard.register('ArrowUp', spaceShip.thrust);
+        gameKeyboard.register('ArrowUp', thrust);
         gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
         gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
         gameKeyboard.register(' ', playerShoot);
