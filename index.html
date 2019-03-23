@@ -16,6 +16,7 @@
       render: []
     }; 
   </script>
+  <iframe src="./resources/audio/backgroundMusic.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
   <div id="game">
     <div id="main-menu" class="screen">
       <h1>Destroids</h1>
@@ -66,6 +67,10 @@
       <p> - https://ya-webdesign.com/download.html?utm_source=gg#gal_445279 </p>
       <p> - http://www.freeimageslive.com/galleries/space/nebula/pics/hst_carina_ngc3372_0006.jpg </p>
       <p> - Nevrax SARL / Winch Gate Properties Ltd. Ryzom. https://atys.wiki.ryzom.com/wiki/Ryzom_Commons:About</p>
+      <div class="attribution-block">
+        <a href="http://dig.ccmixter.org/files/Mr_Yesterday/58884">Black Ice</a> by Mr_Yesterday (c) copyright 2018 Licensed under a Creative Commons
+         <a href="http://creativecommons.org/licenses/by/3.0/">
+          Attribution (3.0)</a> license. Ft: reusenoise</div>
       <ul class="menu">
         <li><button id="id-about-back">Back</button></li>
       </ul>
@@ -78,27 +83,30 @@
         <canvas id="id-canvas" width="1000" height="1000" 
         style="width: 100%; height: 100%; "></canvas>
       </div>
-      <div id="right" class="rightPane">
+      <div id="left" class="leftPane">
         <div>
           <div id="current-game-stats"></div>
         </div>
         <div id="id-lives-left"></div>
+        <div id="myProgress">
+          <div id="myBar"></div>
+        </div>
       </div>
     </div>
   </div>
   <script src="scripts/render/core.js"></script>
-  <script src="scripts/render/particleSystem.js"></script>
-  <script src="scripts/render/spaceShip.js"></script>
+  <script src="scripts/render/particlesystem.js"></script>
+  <script src="scripts/render/spaceship.js"></script>
   <script src="scripts/render/laser.js"></script>
   <script src="scripts/render/asteroid.js"></script>
-  <script src="scripts/render/alienShipManager.js"></script>
+  <script src="scripts/render/alienshipmanager.js"></script>
 
-  <script src="scripts/objects/particleSystem.js"></script>
-  <script src="scripts/objects/laserManager.js"></script>
-  <script src="scripts/objects/spaceShip.js"></script>
-  <script src="scripts/objects/asteroidManager.js"></script>
-  <script src="scripts/objects/lifeManager.js"></script>
-  <script src="scripts/objects/alienShipManager.js"></script>
+  <script src="scripts/objects/particlesystem.js"></script>
+  <script src="scripts/objects/lasermanager.js"></script>
+  <script src="scripts/objects/spaceship.js"></script>
+  <script src="scripts/objects/asteroidmanager.js"></script>
+  <script src="scripts/objects/lifemanager.js"></script>
+  <script src="scripts/objects/alienshipmanager.js"></script>
 
   <script src="scripts/game.js"></script>
   <script src="scripts/screens/about.js"></script>

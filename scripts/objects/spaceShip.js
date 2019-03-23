@@ -18,15 +18,19 @@ Game.objects.SpaceShip = function (spec) {
     let rotation = Math.PI / 2;
     let xSpeed = 0;
     let ySpeed = 0;
-    let imageReady = false;
-    let image = new Image();
     let lastHyperSpaceTime = 0;
     let hyperspaceInterval = spec.hyperspaceInterval * 1000 // miliseconds
 
+    let imageReady = false;
+    let image = new Image();
     image.onload = function () {
         imageReady = true;
     };
     image.src = spec.imageSrc;
+
+    function getHyperspacePercentage() {
+        return (performance.now() - lastHyperSpaceTime) / hyperspaceInterval; 
+    }
 
     function rotateLeft(elapsedTime) {
         rotation -= spec.rotationRate * (elapsedTime / 100);
@@ -147,6 +151,8 @@ Game.objects.SpaceShip = function (spec) {
         if (performance.now() - lastHyperSpaceTime > hyperspaceInterval) {
             lastHyperSpaceTime = performance.now();
             hyperspace(objectsToAvoid); 
+            let audio = new Audio(spec.hyperspaceAudio);
+            audio.play();
             return true; 
         }
         else {
@@ -157,6 +163,13 @@ Game.objects.SpaceShip = function (spec) {
 
     function newLifeHyperspace(objectsToAvoid) {
         hyperspace(objectsToAvoid); 
+        let audio = new Audio(spec.newLifeAudio);
+        audio.play(); 
+    }
+
+    function crash() {
+        let audio = new Audio(spec.audioSrc);
+        audio.play(); 
     }
 
     function startGame() {
@@ -190,9 +203,11 @@ Game.objects.SpaceShip = function (spec) {
         rotateRight: rotateRight,
         thrust: thrust,
         moveTo: moveTo,
+        crash: crash,
         shoot: shoot,
         newLifeHyperspace: newLifeHyperspace,
         playerHyperspace: playerHyperspace,
+        getHyperspacePercentage: getHyperspacePercentage,
         get imageReady() { return imageReady; },
         get rotation() { return rotation; },
         get image() { return image; },

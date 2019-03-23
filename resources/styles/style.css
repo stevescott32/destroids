@@ -110,7 +110,6 @@ footer {
   float: left; 
   border: 4px; 
   border-color: white; 
-  overflow-y: scroll; 
   position: fixed; 
   height: 75%; 
   justify-content: center
@@ -236,3 +235,13 @@ ul.menu li button:active {
     text-align: center;
 }
 
+#myProgress {
+  width: 90%;
+  background-color: var(--main-dark);
+}
+
+#myBar {
+  width: 1%;
+  height: 30px;
+  background-color: grey;  
+}

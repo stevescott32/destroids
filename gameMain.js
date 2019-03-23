@@ -10,6 +10,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     let score = 0;
     let cancelNextRequest = true; 
 
+
     // ********************************************
     // ********* Objects for the game *************
     // ********************************************
@@ -19,13 +20,15 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     // player spaceship. starts in the middle of the screen
     let spaceShip = objects.SpaceShip({
         imageSrc: 'resources/images/ships/ship3.png',
+        audioSrc: 'resources/audio/death_flash.flac', 
+        newLifeAudio: 'resources/audio/powerUp.mp3', 
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2 },
         size: { width: 80, height: 80 },
         radius: 35,
         canvasHeight: graphics.canvas.height,
         canvasWidth: graphics.canvas.width,
         thrust: 500 / 1000,
-        rotationRate: Math.PI / 16, // radians per second
+        rotationRate: Math.PI / 12, // radians per second
         crashed: false,
         hyperspaceInterval: 5 // seconds
     });
@@ -33,6 +36,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     // manager for all lasers fired by player spaceship
     let spaceShipLasers = objects.LaserManager({
         imageSrc: 'resources/images/lasers/redLaser.png',
+        audioSrc: 'resources/audio/laser3.mp3', 
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         interval: 200 // milliseconds
@@ -40,6 +44,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
 
     let alienLasers = objects.LaserManager({
         imageSrc: 'resources/images/lasers/purpleBlob.png',
+        audioSrc: 'resources/audio/laser9.mp3', 
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         interval: 500 // milliseconds
@@ -54,6 +59,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     // manager for all asteroids in the game
     let asteroidManager = objects.AsteroidManager({
         imageSrc: "resources/images/asteroid.png",
+        audioSrc: 'resources/audio/coin10.wav',
         maxX: graphics.canvas.height,
         maxY: graphics.canvas.width,
         maxSize: 200,
@@ -75,6 +81,18 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     // *********** Keyboard actions ***************
     // ********************************************
 
+    let lastAudioOff = 0; 
+    // the player laser and the asteroid sound do not help the 
+    // player to win, so they can be toggled off 
+    function toggleUnhelpfulAudio() {
+        // don't toggle repeatedly if the toggle is held down
+        if(performance.now() - lastAudioOff > 1000) {
+            lastAudioOff = performance.now(); 
+            spaceShipLasers.toggleAudio();
+            asteroidManager.toggleAudio();
+        } 
+    }
+
     function playerShoot() {
         if(!quit) {
             spaceShipLasers.addLaser(spaceShip.shoot()); 
@@ -85,6 +103,11 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         if(spaceShip.playerHyperspace(asteroidManager.asteroids)) {
             particleSystemManager.createHyperspaceEffect(spaceShip); 
         }
+    }
+
+    function thrust() {
+        spaceShip.thrust(); 
+        particleSystemManager.createThrustEffect(spaceShip); 
     }
 
     function escape() {
@@ -136,12 +159,13 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
             inputBuffer[event.key] = event.key;
         });
 
-        gameKeyboard.register('ArrowUp', spaceShip.thrust);
+        gameKeyboard.register('ArrowUp', thrust);
         gameKeyboard.register('ArrowLeft', spaceShip.rotateLeft);
         gameKeyboard.register('ArrowRight', spaceShip.rotateRight);
         gameKeyboard.register(' ', playerShoot);
         gameKeyboard.register('z', hyperspace); 
         gameKeyboard.register('Escape', escape); 
+        gameKeyboard.register('t', toggleUnhelpfulAudio); 
     }
 
     function run() {
@@ -155,6 +179,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     function playerHit() {
         particleSystemManager.createShipExplosion(spaceShip.center.x, spaceShip.center.y); 
         spaceShip.crashed = true;
+        spaceShip.crash(); 
         lifeManager.loseLife(); 
         if(lifeManager.isGameOver()) {
             endGame(); 
