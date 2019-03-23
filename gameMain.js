@@ -148,7 +148,6 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     function endGame() {
         quit = true;
         cancelNextRequest = true; 
-        score = asteroidManager.asteroidScore;  
         highScoreManager.endGame(score); 
         game.showScreen('high-scores'); 
     }
@@ -210,6 +209,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
                     ship.crash(); 
                     laser.isDead = true; 
                     particleSystemManager.createUFOExplosion(ship.center.x, ship.center.y); 
+                    score += 100; 
                 } 
             })
         });
@@ -228,6 +228,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
                 if(!laser.isDead && Collisions.detectCirclePointCollision(asteroid, laser)) {
                     asteroidManager.explode(asteroid, particleSystemManager); 
                     laser.isDead = true; 
+                    score += (80 - 20 * asteroid.size.sizeCategory); 
                 }
             })
             if(Collisions.detectCircleCollision(spaceShip, asteroid)) {
@@ -251,8 +252,8 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         spaceShip.update(elapsedTime);
         particleSystemManager.update(elapsedTime); 
         highScoreManager.update(elapsedTime, score); 
+        console.log('Score: ' + score); 
 
-        score = asteroidManager.asteroidScore; 
         detectCollisions(); 
     }
 
@@ -292,12 +293,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         startGame(); 
     }
 
-    function clearHighScores() {
-        highScoreManager.clearHighScores();
-    }
-
     return {
-        clearHighScores: clearHighScores,
         restartGame: restartGame,
         run: run,
         initialize: initialize

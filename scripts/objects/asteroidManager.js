@@ -8,7 +8,6 @@ Game.objects.AsteroidManager = function (managerSpec) {
 
   let asteroids = [];
   let accumulatedTime = 0;
-  let asteroidScore = 0;
   let disableAudio = false; 
 
   let image = new Image();
@@ -114,7 +113,6 @@ Game.objects.AsteroidManager = function (managerSpec) {
   }
 
   function explode(asteroid, particleSystemManager) {
-    asteroidScore += 1;
     asteroid.isDead = true;
     particleSystemManager.createAsteroidBreakup(asteroid)
     if (asteroid.size.sizeCategory > 1) {
@@ -163,7 +161,6 @@ Game.objects.AsteroidManager = function (managerSpec) {
 
   function startGame() {
     asteroids = [];
-    asteroidScore = 0;
     accumulatedTime = 0;
     for(let initialAsteroids = 0; initialAsteroids < managerSpec.initialAsteroids; initialAsteroids++) {
       asteroids.push(generateNewAsteroid()); 
@@ -178,7 +175,6 @@ Game.objects.AsteroidManager = function (managerSpec) {
     get imageReady() { return imageReady; },
     get image() { return image; },
     get asteroids() { return asteroids; },
-    get asteroidScore() { return asteroidScore; }
   };
 
   return api;
