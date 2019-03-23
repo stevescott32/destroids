@@ -30,7 +30,13 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         }
 
         function isDead() {
-            if(systemTotalTime > spec.explosionLifetime) {
+            let count = 0; 
+            Object.getOwnPropertyNames(particles).forEach(function () {
+                count++; 
+            }); 
+            console.log('Count: ' + count); 
+
+            if(systemTotalTime > spec.explosionLifetime && count == 0) {
                 return true;
             }
             return false; 
@@ -43,7 +49,9 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             systemTotalTime += elapsedTime; 
 
             for (let particle = 0; particle < spec.density; particle++) {
-                particles[nextName++] = create();
+                if(systemTotalTime < spec.explosionLifetime) {
+                    particles[nextName++] = create();
+                }
             }
 
             Object.getOwnPropertyNames(particles).forEach(value => {
@@ -81,8 +89,8 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
             center: { x: spaceship.center.x, y: spaceship.center.y },
             size: { mean: 20, stdev: 4 }, 
             speed: { mean: 400, stdev: 20 }, 
-            lifetime: { mean: 0.5, stdev: 0.1 }, 
-            explosionLifetime: 0.5, 
+            lifetime: { mean: 0.3, stdev: 0.1 }, 
+            explosionLifetime: 0.3, 
             density: 8, 
             imageSrc: "resources/textures/flare.png"
         })); 
@@ -105,9 +113,9 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         effects.push(makeEffect({
             center: { x: asteroid.center.x, y: asteroid.center.y },
             size: { mean: 10, stdev: 2 }, 
-            speed: { mean: (200 * sc), stdev: 20 }, 
-            lifetime: { mean: (0.4 + sc * 0.1), stdev: 0.2 }, 
-            explosionLifetime: 0.4 + sc * 0.1, 
+            speed: { mean: (150 * sc), stdev: 20 }, 
+            lifetime: { mean: (0.18 + sc * 0.05), stdev: 0.1 }, 
+            explosionLifetime: 0.18 + sc * 0.03, 
             density: sc * sc * 5, 
             imageSrc: "resources/textures/smoke.png"
         })); 
