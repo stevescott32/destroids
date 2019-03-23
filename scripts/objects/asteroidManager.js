@@ -126,7 +126,7 @@ Game.objects.AsteroidManager = function (managerSpec) {
     console.log('Asteroids size ' + asteroids.length); 
     if(!disableAudio) {
       let audio = new Audio(managerSpec.audioSrc);
-      audio.volume = 0.1;
+      audio.volume = 0.3;
       audio.play(); 
     }
   }

@@ -10,6 +10,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     let score = 0;
     let cancelNextRequest = true; 
 
+
     // ********************************************
     // ********* Objects for the game *************
     // ********************************************
@@ -20,6 +21,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     let spaceShip = objects.SpaceShip({
         imageSrc: 'resources/images/ships/ship3.png',
         audioSrc: 'resources/audio/death_flash.flac', 
+        newLifeAudio: 'resources/audio/powerUp.mp3', 
         center: { x: graphics.canvas.width / 2, y: graphics.canvas.height / 2 },
         size: { width: 80, height: 80 },
         radius: 35,

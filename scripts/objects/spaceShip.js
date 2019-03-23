@@ -151,6 +151,8 @@ Game.objects.SpaceShip = function (spec) {
         if (performance.now() - lastHyperSpaceTime > hyperspaceInterval) {
             lastHyperSpaceTime = performance.now();
             hyperspace(objectsToAvoid); 
+            let audio = new Audio(spec.hyperspaceAudio);
+            audio.play();
             return true; 
         }
         else {
@@ -161,6 +163,8 @@ Game.objects.SpaceShip = function (spec) {
 
     function newLifeHyperspace(objectsToAvoid) {
         hyperspace(objectsToAvoid); 
+        let audio = new Audio(spec.newLifeAudio);
+        audio.play(); 
     }
 
     function crash() {
