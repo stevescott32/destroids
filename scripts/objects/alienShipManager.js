@@ -72,12 +72,13 @@ Game.objects.AlienShipManager = function (spec) {
         let api = {
             update: update,
             crash: crash,
+            isDead: isDead,
+            get isDead() { return isDead; }, 
             get imageReady() { return imageReady; },
             get rotation() { return shipSpec.rotation; },
             get image() { return image; },
             get center() { return shipSpec.center; },
             get size() { return shipSpec.size; },
-            get isDead() { return isDead; },
             get radius() { return shipSpec.radius; }
         }
 

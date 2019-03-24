@@ -58,7 +58,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         minSpeed: 50,
         interval: 1, // seconds
         maxAsteroids: 12,
-        initialAsteroids: 8
+        initialAsteroids: 8,
     }, objects);
 
     let lifeManager = objects.LifeManager({
@@ -90,8 +90,25 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     }
 
     function hyperspace() {
-        if(spaceShip.playerHyperspace(asteroidManager.asteroids)) {
-            particleSystemManager.createHyperspaceEffect(spaceShip); 
+        let allObjects = []; 
+        allObjects.push(asteroidManager.asteroids); 
+        //console.log(asteroidManager.asteroids); 
+        allObjects.push(alienLasers.lasers); 
+        //console.log(alienLasers.lasers); 
+        allObjects.push(alienShipManager.ships); 
+        //console.log(alienShipManager.ships); 
+        try {
+            if(spaceShip.playerHyperspace(allObjects)) {
+                particleSystemManager.createHyperspaceEffect(spaceShip); 
+            }
+        } catch (error) {
+            console.log('Hyperspace smash'); 
+            asteroidManager.startGame();
+            alienLasers.startGame();
+            alienShipManager.startGame();  
+            particleSystemManager.clearScreen(); 
+            spaceShip.center.x = graphics.canvas.width / 2;
+            spaceShip.center.y = graphics.canvas.height / 2; 
         }
     }
 
@@ -182,8 +199,24 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         else {
             spaceShip.crashed = false; 
             spaceShip.startGame(); 
-            spaceShip.newLifeHyperspace(asteroidManager.asteroids); 
-            particleSystemManager.createNewLifeEffect(spaceShip); 
+
+            let allObjects = []; 
+            allObjects.push(asteroidManager.asteroids); 
+            allObjects.push(alienLasers.lasers); 
+            allObjects.push(alienShipManager.ships); 
+            try {
+                spaceShip.newLifeHyperspace(allObjects); 
+                particleSystemManager.createNewLifeEffect(spaceShip);
+            } catch (error) {
+                console.log('Hyperspace smash'); 
+                asteroidManager.startGame();
+                alienLasers.startGame();
+                alienShipManager.startGame();  
+                particleSystemManager.clearScreen(); 
+                spaceShip.center.x = graphics.canvas.width / 2;
+                spaceShip.center.y = graphics.canvas.height / 2; 
+            }
+
         }
     }
 
@@ -195,7 +228,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     function detectCollisions() {
         // alien ships with player and player lasers 
         alienShipManager.ships.forEach(ship => {
-            if(Collisions.detectCircleCollision(ship, spaceShip)) {
+            if(!ship.isDead && Collisions.detectCircleCollision(ship, spaceShip)) {
                 playerHit();
                 ship.crash();
                 particleSystemManager.createUFOExplosion(ship.center.x, ship.center.y); 
@@ -227,7 +260,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
                     score += (80 - 20 * asteroid.size.sizeCategory); 
                 }
             })
-            if(Collisions.detectCircleCollision(spaceShip, asteroid)) {
+            if(!asteroid.isDead && Collisions.detectCircleCollision(spaceShip, asteroid)) {
                 playerHit(); 
             }
         }); 
