@@ -4,7 +4,6 @@
 // ************************************************
 
 Game.highScores = (function () {
-  console.log('Initializing high scores'); 
   // print the current score out to the screen 
   let highScores = []; 
   let startTime = 0; 
@@ -53,7 +52,6 @@ Game.highScores = (function () {
     }
   }
 
-  // ??? not sure where to put this
   // remove the high score notification after a new game has started
   function removeHighScoreNotification() {
     let notifyParent = document.getElementById('notify-of-high-score');
@@ -115,7 +113,6 @@ Game.highScores = (function () {
   // this should just be part of end game 
   // set high scores in local storage so they persist
   function storeHighScores() {
-    console.log('Storing high scores in local storage'); 
     let highScoreString = JSON.stringify(highScores);
     window.localStorage.setItem('highScores', highScoreString);
   }

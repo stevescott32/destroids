@@ -4,7 +4,6 @@
  * managerSpec = { lives: }
  */
 Game.objects.LifeManager = (function (managerSpec) {
-  console.log('Initializing life manager');
   let livesLeft = managerSpec.lives;
 
   function loseLife() {
@@ -31,9 +30,6 @@ Game.objects.LifeManager = (function (managerSpec) {
       let textElement = document.createTextNode('Lives Left: ' + livesLeft); 
       pElement.appendChild(textElement);
       livesLeftElement.appendChild(pElement);
-    }
-    else {
-      console.log("Error: livesLeftElement not found"); 
     }
   }
 

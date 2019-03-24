@@ -92,11 +92,8 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
     function hyperspace() {
         let allObjects = []; 
         allObjects.push(asteroidManager.asteroids); 
-        //console.log(asteroidManager.asteroids); 
         allObjects.push(alienLasers.lasers); 
-        //console.log(alienLasers.lasers); 
         allObjects.push(alienShipManager.ships); 
-        //console.log(alienShipManager.ships); 
         try {
             if(spaceShip.playerHyperspace(allObjects)) {
                 particleSystemManager.createHyperspaceEffect(spaceShip); 

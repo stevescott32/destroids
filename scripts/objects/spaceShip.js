@@ -130,7 +130,6 @@ Game.objects.SpaceShip = function (spec) {
    
     let safetyFactor = 10; 
     function hyperspace(allObjectsToAvoid) {
-        console.log('Hyperspace safety factor: ' + safetyFactor); 
         let possibleLocations = [];
         // calculate the danger of each space ship location
         for (let x = 2 * spec.size.width; x < Game.graphics.canvas.width - (2 * spec.size.width); x += 2 * spec.size.width) {
@@ -149,13 +148,11 @@ Game.objects.SpaceShip = function (spec) {
         if(mostSafe.xPos && mostSafe.yPos) {
             spec.center.x = mostSafe.xPos;
             spec.center.y = mostSafe.yPos;
-            console.log('Space ship at ' + spec.center.x + ': ' + spec.center.y); 
             xSpeed = 0;
             ySpeed = 0;
             safetyFactor = 10; 
         }
         else {
-            console.log('ERROR: undefined ship location. Running hyperspace again'); 
             safetyFactor--; 
             if(safetyFactor > 2) {
                 hyperspace(allObjectsToAvoid); 
