@@ -26,7 +26,7 @@ Game.screens['game-play'] = (function (game, objects, renderer, graphics, input,
         size: { width: 80, height: 80 },
         radius: 35,
         thrust: 500 / 1000,
-        rotationRate: Math.PI / 12, // radians per second
+        rotationRate: Math.PI / 10, // radians per second
         crashed: false,
         hyperspaceInterval: 5 // seconds
     });
