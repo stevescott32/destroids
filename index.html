@@ -27,64 +27,75 @@
         <li><button id="id-about">About</button></li>
       </ul>
     </div>
+
     <div id="high-scores" class="screen">
       <h1>High Scores</h1>
       <div id='highScoresList'>
-          <p>Initializing...</p>
-        </div>
-        <button id="clear-high-scores-button" class="basicButton greenButton smallButton"
-          onclick="Game.highScores.clearHighScores()">
-          Clear Scores
-        </button>
-        <div id="notify-of-high-score"></div>
+        <p>Initializing...</p>
+      </div>
+      <button id="clear-high-scores-button" class="basicButton greenButton smallButton"
+        onclick="Game.highScores.clearHighScores()">
+        Clear Scores
+      </button>
+      <div id="notify-of-high-score"></div>
       <ul class="menu">
         <li><button id="id-high-scores-back">Main Menu</button></li>
         <li><button id="id-high-scores-new-game">New Game</button></li>
       </ul>
     </div>
+
     <div id="help" class="screen">
       <h1>Help</h1>
-      <p>Controls: </p>
-      <ul>
+      <h2>Controls: </h2>
+      <ul id="id-help-list">
         <li>Shoot: space bar</li>
         <li>Rotate right: right arrow</li>
         <li>Rotate left: left arrow</li>
         <li>Return to main menu: escape</li>
+        <li>Hyperspace: z</li>
       </ul>
       <ul class="menu">
         <li><button id="id-help-back">Back</button></li>
       </ul>
     </div>
+
     <div id="about" class="screen">
       <h1>About</h1>
-      <p>Development: </p>
-      <p> - Steven Scott</p>
-      <p>Testing: </p>
-      <p> - Ryan Scott</p>
-      <p> - Katie Taylor</p>
-      <p> - Shane Canfield</p>
-      <p>Graphics: </p>
-      <p> - http://millionthvector.blogspot.de</p>
-      <p> - https://ya-webdesign.com/download.html?utm_source=gg#gal_445279 </p>
-      <p> - http://www.freeimageslive.com/galleries/space/nebula/pics/hst_carina_ngc3372_0006.jpg </p>
-      <p> - Nevrax SARL / Winch Gate Properties Ltd. Ryzom. https://atys.wiki.ryzom.com/wiki/Ryzom_Commons:About</p>
-      <div class="attribution-block">
-        <a href="http://dig.ccmixter.org/files/Mr_Yesterday/58884">Black Ice</a> by Mr_Yesterday (c) copyright 2018 Licensed under a Creative Commons
-         <a href="http://creativecommons.org/licenses/by/3.0/">
-          Attribution (3.0)</a> license. Ft: reusenoise</div>
       <ul class="menu">
         <li><button id="id-about-back">Back</button></li>
       </ul>
+      <ul class="credits">
+        <li>Development: Steven Scott</li>
+        <li>Testing:
+          <ul>
+            <li>Katie Taylor</li>
+            <li>Ryan Scott</li>
+            <li>Shane Canfield</li>
+            <li>Glen Scott</li>
+            <li>Louisa Dayton</li>
+          </ul>
+        </li>
+        <li>
+          <ul>External resources:
+            <li> - http://millionthvector.blogspot.de</li>
+            <li> - https://ya-webdesign.com/download.html?utm_source=gg#gal_445279 </li>
+            <li> - http://www.freeimageslive.com/galleries/space/nebula/pics/hst_carina_ngc3372_0006.jpg </li>
+            <li> - Nevrax SARL / Winch Gate Properties Ltd. Ryzom. https://atys.wiki.ryzom.com/wiki/Ryzom_Commons:About
+            </li>
+            <li>
+              <div class="attribution-block">
+                <a href="http://dig.ccmixter.org/files/Mr_Yesterday/58884">Black Ice</a> by Mr_Yesterday (c) copyright
+                2018 Licensed under a Creative Commons
+                <a href="http://creativecommons.org/licenses/by/3.0/">
+                  Attribution (3.0)</a> license. Ft: reusenoise</div>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
 
-
-
     <div id="game-play" class="screen">
-      <div class="centerPane">
-        <canvas id="id-canvas" width="1000" height="1000" 
-        style="width: 100%; height: 100%; "></canvas>
-      </div>
-      <div id="left" class="leftPane">
+      <div id="left" class="scoreDisplay">
         <div>
           <div id="current-game-stats"></div>
         </div>
@@ -92,34 +103,39 @@
         <div id="myProgress">
           <div id="myBar"></div>
         </div>
+        </div>
+        <div class="centerPane">
+          <canvas id="id-canvas"></canvas>
+        </div>
       </div>
     </div>
-  </div>
-  <script src="scripts/render/core.js"></script>
-  <script src="scripts/render/particlesystem.js"></script>
-  <script src="scripts/render/spaceship.js"></script>
-  <script src="scripts/render/laser.js"></script>
-  <script src="scripts/render/asteroid.js"></script>
-  <script src="scripts/render/alienshipmanager.js"></script>
 
-  <script src="scripts/objects/particlesystem.js"></script>
-  <script src="scripts/objects/lasermanager.js"></script>
-  <script src="scripts/objects/spaceship.js"></script>
-  <script src="scripts/objects/asteroidmanager.js"></script>
-  <script src="scripts/objects/lifemanager.js"></script>
-  <script src="scripts/objects/alienshipmanager.js"></script>
+    <script src="scripts/render/core.js"></script>
+    <script src="scripts/render/particlesystem.js"></script>
+    <script src="scripts/render/spaceship.js"></script>
+    <script src="scripts/render/laser.js"></script>
+    <script src="scripts/render/asteroid.js"></script>
+    <script src="scripts/render/alienshipmanager.js"></script>
 
-  <script src="scripts/game.js"></script>
-  <script src="scripts/screens/about.js"></script>
-  <script src="scripts/screens/help.js"></script>
-  <script src="scripts/screens/highScores.js"></script>
-  <script src="scripts/screens/mainMenu.js"></script>
+    <script src="scripts/objects/particlesystem.js"></script>
+    <script src="scripts/objects/lasermanager.js"></script>
+    <script src="scripts/objects/spaceship.js"></script>
+    <script src="scripts/objects/asteroidmanager.js"></script>
+    <script src="scripts/objects/lifemanager.js"></script>
+    <script src="scripts/objects/alienshipmanager.js"></script>
 
-  <script src="scripts/inputKeyboard.js"></script>
-  <script src="scripts/highScoreManager.js"></script>
-  <script src="scripts/random.js"></script>
-  <script src="scripts/collisions.js"></script>
-  <script src="gameMain.js"></script>
+    <script src="scripts/game.js"></script>
+    <script src="scripts/screens/about.js"></script>
+    <script src="scripts/screens/help.js"></script>
+    <script src="scripts/screens/highScores.js"></script>
+    <script src="scripts/screens/mainMenu.js"></script>
+
+    <script src="scripts/inputKeyboard.js"></script>
+    <script src="scripts/highScoreManager.js"></script>
+    <script src="scripts/random.js"></script>
+    <script src="scripts/collisions.js"></script>
+    <script src="gameMain.js"></script>
 
 </body>
+
 </html>

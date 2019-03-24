@@ -12,7 +12,6 @@
 // --------------------------------------------------------------
 Game.objects.SpaceShip = function (spec) {
     'use strict';
-    console.log('Initializing space ship');
     let MAX_SPEED = 200;
 
     let rotation = Math.PI / 2;
@@ -99,19 +98,23 @@ Game.objects.SpaceShip = function (spec) {
         }
     }
 
-    function calculateSafety(objectsToAvoid, xPos, yPos) {
+    function calculateSafety(objectsToAvoid, xPos, yPos, safetyFactor) {
         let safetyScore = 0;
 
-        for (let a = 0; a < objectsToAvoid.length; a++) {
-            let avoid = objectsToAvoid[a];
-            let additionalSafety = Math.pow(xPos - avoid.center.x, 2) + Math.pow(yPos - avoid.center.y, 2);
-            if (!isNaN(additionalSafety)) {
-                safetyScore += additionalSafety;
-            }
-            // detect if there is an asteroid within 2 * radius of the ship and break 
-            if (detectCircleCollision(avoid, { x: xPos, y: yPos }, spec.radius * 2)) {
-                safetyScore = 0;
-                break;
+        for (let o = 0; o < objectsToAvoid.length; o++) {
+            for (let i = 0; i < objectsToAvoid[0].length; i++) {
+                let avoid = objectsToAvoid[o][i];
+                if(!avoid) { 
+                    break; 
+                }
+                let additionalSafety = Math.pow(xPos - avoid.center.x, 2) + Math.pow(yPos - avoid.center.y, 2);
+                if (!isNaN(additionalSafety)) {
+                    safetyScore += additionalSafety;
+                }
+                // detect if there is an asteroid within 2 * radius of the ship and break 
+                if (detectCircleCollision(avoid, { x: xPos, y: yPos }, spec.radius * safetyFactor)) {
+                    return 0;
+                }
             }
         }
 
@@ -124,13 +127,15 @@ Game.objects.SpaceShip = function (spec) {
         return api;
     }
 
-    
-    function hyperspace(objectsToAvoid) {
+   
+    let safetyFactor = 10; 
+    function hyperspace(allObjectsToAvoid) {
+        console.log('Hyperspace safety factor: ' + safetyFactor); 
         let possibleLocations = [];
         // calculate the danger of each space ship location
-        for (let x = 2 * spec.size.width; x < spec.canvasWidth - (2 * spec.size.width); x += 2 * spec.size.width) {
-            for (let y = 2 * spec.size.height; y < spec.canvasHeight - (2 * spec.size.height); y += 2 * spec.size.height) {
-                possibleLocations.push(calculateSafety(objectsToAvoid, x, y));
+        for (let x = 2 * spec.size.width; x < Game.graphics.canvas.width - (2 * spec.size.width); x += 2 * spec.size.width) {
+            for (let y = 2 * spec.size.height; y < Game.graphics.canvas.height - (2 * spec.size.height); y += 2 * spec.size.height) {
+                possibleLocations.push(calculateSafety(allObjectsToAvoid, x, y, safetyFactor));
             }
         }
 
@@ -141,16 +146,33 @@ Game.objects.SpaceShip = function (spec) {
                 mostSafe = possibleLocations[d];
             }
         }
-        spec.center.x = mostSafe.xPos;
-        spec.center.y = mostSafe.yPos;
-        xSpeed = 0;
-        ySpeed = 0;
+        if(mostSafe.xPos && mostSafe.yPos) {
+            spec.center.x = mostSafe.xPos;
+            spec.center.y = mostSafe.yPos;
+            console.log('Space ship at ' + spec.center.x + ': ' + spec.center.y); 
+            xSpeed = 0;
+            ySpeed = 0;
+            safetyFactor = 10; 
+        }
+        else {
+            console.log('ERROR: undefined ship location. Running hyperspace again'); 
+            safetyFactor--; 
+            if(safetyFactor > 2) {
+                hyperspace(allObjectsToAvoid); 
+            } else {
+                console.log('ERROR: No safe locations for hyperspace'); 
+                spec.center.x = undefined;  
+                spec.center.y =  undefined;
+                
+                throw 'hyperspace error'; 
+            }
+        }
     }
     
-    function playerHyperspace(objectsToAvoid) {
+    function playerHyperspace(allObjectsToAvoid) {
         if (performance.now() - lastHyperSpaceTime > hyperspaceInterval) {
             lastHyperSpaceTime = performance.now();
-            hyperspace(objectsToAvoid); 
+            hyperspace(allObjectsToAvoid); 
             let audio = new Audio(spec.hyperspaceAudio);
             audio.play();
             return true; 
@@ -161,8 +183,8 @@ Game.objects.SpaceShip = function (spec) {
     }
 
 
-    function newLifeHyperspace(objectsToAvoid) {
-        hyperspace(objectsToAvoid); 
+    function newLifeHyperspace(allObjectsToAvoid) {
+        hyperspace(allObjectsToAvoid); 
         let audio = new Audio(spec.newLifeAudio);
         audio.play(); 
     }
@@ -176,22 +198,22 @@ Game.objects.SpaceShip = function (spec) {
         rotation = Math.PI / 2;
         xSpeed = 0;
         ySpeed = 0;
-        spec.center = { x: spec.canvasWidth / 2, y: spec.canvasHeight / 2 };
+        spec.center = { x: Game.graphics.canvas.width / 2, y: Game.graphics.canvas.height / 2 };
     }
 
     function update(elapsedTime) {
         spec.center.x -= xSpeed * (elapsedTime / 100);
         spec.center.y -= ySpeed * (elapsedTime / 100);
         if (spec.center.x < 0) {
-            spec.center.x = spec.canvasWidth;
+            spec.center.x = Game.graphics.canvas.width;
         }
-        else if (spec.center.x > spec.canvasWidth) {
+        else if (spec.center.x > Game.graphics.canvas.width) {
             spec.center.x = 0;
         }
         else if (spec.center.y < 0) {
-            spec.center.y = spec.canvasHeight;
+            spec.center.y = Game.graphics.canvas.height;
         }
-        else if (spec.center.y > spec.canvasHeight) {
+        else if (spec.center.y > Game.graphics.canvas.height) {
             spec.center.y = 0;
         }
     }

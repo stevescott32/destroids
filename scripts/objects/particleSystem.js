@@ -153,6 +153,18 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         })); 
     }
 
+    function clearScreen() {
+        effects.push(makeEffect({
+            center: { x: Game.graphics.canvas.width / 2, y: Game.graphics.canvas.height / 2 },
+            size: { mean: 100, stdev: 4 }, 
+            speed: { mean: 500, stdev: 20 }, 
+            lifetime: { mean: 1, stdev: 0.5 }, 
+            explosionLifetime: 1, 
+            density: 10, 
+            imageSrc: "resources/images/lasers/purpleBlob.png"
+        })); 
+    }
+
     function createUFOExplosion(xPos, yPos) {
         effects.push(makeEffect({
             center: { x: xPos, y: yPos },
@@ -195,6 +207,7 @@ Game.objects.ParticleSystemManager = function (managerSpec) {
         createHyperspaceEffect: createHyperspaceEffect,
         createNewLifeEffect: createNewLifeEffect,
         createThrustEffect: createThrustEffect, 
+        clearScreen: clearScreen, 
         startGame: startGame,
         update: update,
         get effects() { return effects; },

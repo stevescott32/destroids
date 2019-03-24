@@ -53,24 +53,27 @@ Game.objects.LaserManager = function (managerSpec) {
     }
   }
 
+  // reset the lasers and timer so a new game can begin
   function startGame() {
     lasers = []; 
     lastTimeFired = 0; 
   }
 
   function update(elapsedTime) {
+    // remove dead lasers
     if(lasers[0] && lasers[0].isDead) {
       lasers.shift(); 
     }
+    // update laser positions
     for (let l = 0; l < lasers.length; l++) {
       let laser = lasers[l];
       laser.center.x -= laser.xSpeed * elapsedTime;
       laser.center.y -= laser.ySpeed * elapsedTime;
 
+      // check if laser has left the bounds of the canvas and should be dead 
       if (laser.center.x < 0 || laser.center.y < 0 ||
-        laser.center.x > managerSpec.maxX || laser.center.y > managerSpec.maxY) {
+        laser.center.x > Game.graphics.canvas.width || laser.center.y > Game.graphics.canvas.height) {
         laser.isDead = true;
-        console.log('Laser out of bounds'); 
       }
     }
   }

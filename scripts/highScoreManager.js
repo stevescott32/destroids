@@ -115,14 +115,15 @@ Game.highScores = (function () {
   // this should just be part of end game 
   // set high scores in local storage so they persist
   function storeHighScores() {
+    console.log('Storing high scores in local storage'); 
     let highScoreString = JSON.stringify(highScores);
-    window.sessionStorage.setItem('highScores', highScoreString);
+    window.localStorage.setItem('highScores', highScoreString);
   }
 
   // this should be part of start game 
   // retrieve all high scores from local storage
   function getHighScores() {
-    let highScoresString = window.sessionStorage.getItem('highScores');
+    let highScoresString = window.localStorage.getItem('highScores');
     if (highScoresString) {
       highScores = JSON.parse(highScoresString);
     }
